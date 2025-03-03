@@ -57,27 +57,27 @@
 // These are the definitions for Service 1
 #if NUM_SERVICES > 1
 // the header file with the public function prototypes
-#define SERV_1_HEADER "NavigatorHSM.h"
+#define SERV_1_HEADER "GameLogicFSM.h"
 // the name of the Init function
-#define SERV_1_INIT InitNavigatorHSM
+#define SERV_1_INIT InitGameLogicFSM
 // the name of the run function
-#define SERV_1_RUN RunNavigatorHSM
+#define SERV_1_RUN RunGameLogicFSM
 // How big should this services Queue be?
 #define SERV_1_QUEUE_SIZE 3
 #endif
 
 /****************************************************************************/
-// These are the definitions for Service 2
-#if NUM_SERVICES > 2
-// the header file with the public function prototypes
-#define SERV_2_HEADER "SPIFollowerService.h"
-// the name of the Init function
-#define SERV_2_INIT InitSPIFollowerService
-// the name of the run function
-#define SERV_2_RUN RunSPIFollowerService
-// How big should this services Queue be?
-#define SERV_2_QUEUE_SIZE 3
-#endif
+// // These are the definitions for Service 2
+// #if NUM_SERVICES > 2
+// // the header file with the public function prototypes
+// #define SERV_2_HEADER "SPIFollowerService.h"
+// // the name of the Init function
+// #define SERV_2_INIT InitSPIFollowerService
+// // the name of the run function
+// #define SERV_2_RUN RunSPIFollowerService
+// // How big should this services Queue be?
+// #define SERV_2_QUEUE_SIZE 3
+// #endif
 
 /****************************************************************************/
 // These are the definitions for Service 3
@@ -299,6 +299,9 @@ typedef enum
   ES_NEW_NAV_CMD,
   ES_LEFT_INTERSECTION_DETECT,
   ES_RIGHT_INTERSECTION_DETECT,
+
+  //for testing on PIC1 only
+  ES_BEACON_FOUND,
 } ES_EventType_t;
 
 /****************************************************************************/
@@ -353,13 +356,10 @@ typedef enum
 #define TIMER8_RESP_FUNC TIMER_UNUSED
 #define TIMER9_RESP_FUNC PostTapeFSM
 #define TIMER10_RESP_FUNC PostMotorService
-//#define TIMER9_RESP_FUNC TIMER_UNUSED
-//#define TIMER10_RESP_FUNC TIMER_UNUSED
 #define TIMER11_RESP_FUNC TIMER_UNUSED
 #define TIMER12_RESP_FUNC TIMER_UNUSED
-#define TIMER13_RESP_FUNC TIMER_UNUSED
-//#define TIMER14_RESP_FUNC TIMER_UNUSED
-#define TIMER14_RESP_FUNC PostNavigatorHSM
+#define TIMER13_RESP_FUNC PostGameLogicFSM
+#define TIMER14_RESP_FUNC PostGameLogicFSM
 #define TIMER15_RESP_FUNC PostTestHarnessService0
 
 /****************************************************************************/
@@ -369,8 +369,10 @@ typedef enum
 // These symbolic names should be changed to be relevant to your application
 
 #define SERVICE0_TIMER 15
-#define NAV_STATE_DEBUG_TIMER 14
+// #define NAV_STATE_DEBUG_TIMER 14
 #define TapeTest_TIMER 9
 #define Motor_Turning_TIMER 10
+#define ActionAllowedTime_TIMER 14
+#define IdleSetup_TIMER 13
 
 #endif /* ES_CONFIGURE_H */

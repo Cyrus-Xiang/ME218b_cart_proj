@@ -1,0 +1,249 @@
+/****************************************************************************
+ Module
+   GameLogicFSM.c
+
+ Revision
+   1.0.1
+
+ Description
+   This is a GameLogic file for implementing flat state machines under the
+   Gen2 Events and Services Framework.
+
+ Notes
+
+ History
+ When           Who     What/Why
+ -------------- ---     --------
+ 01/15/12 11:12 jec      revisions for Gen2 framework
+ 11/07/11 11:26 jec      made the queue static
+ 10/30/11 17:59 jec      fixed references to CurrentEvent in RunGameLogicSM()
+ 10/23/11 18:20 jec      began conversion from SMGameLogic.c (02/20/07 rev)
+****************************************************************************/
+/*----------------------------- Include Files -----------------------------*/
+/* include header files for this state machine as well as any machines at the
+   next lower level in the hierarchy that are sub-machines to this machine
+*/
+#include "ES_Configure.h"
+#include "ES_Framework.h"
+#include "GameLogicFSM.h"
+#include "dbprintf.h"
+#include <sys/attribs.h>
+#include "terminal.h"
+
+/*----------------------------- Module Defines ----------------------------*/
+
+/*---------------------------- Module Functions ---------------------------*/
+/* prototypes for private functions for this machine.They should be functions
+   relevant to the behavior of this state machine
+*/
+
+/*---------------------------- Module Variables ---------------------------*/
+// everybody needs a state variable, you may need others as well.
+// type of state variable should match htat of enum in header file
+#define ActionTimeAllowed 2000
+#define IdleTimeAtSetup 1000
+#define tape_follow_speed 90 // speed for tape following in duty cycle (max=100)
+
+static GameLogicState_t CurrentState;
+
+// with the introduction of Gen2, we need a module level Priority var as well
+static uint8_t MyPriority;
+
+/*------------------------------ Module Code ------------------------------*/
+/****************************************************************************
+ Function
+     InitGameLogicFSM
+
+ Parameters
+     uint8_t : the priorty of this service
+
+ Returns
+     bool, false if error in initialization, true otherwise
+
+ Description
+     Saves away the priority, sets up the initial transition and does any
+     other required initialization for this state machine
+ Notes
+
+ Author
+     J. Edward Carryer, 10/23/11, 18:55
+****************************************************************************/
+bool InitGameLogicFSM(uint8_t Priority)
+{
+  ES_Event_t ThisEvent;
+
+  MyPriority = Priority;
+  // put us into the Initial PseudoState
+  CurrentState = Setup_Game_s;
+  ES_Timer_InitTimer(IdleSetup_TIMER, IdleTimeAtSetup);
+  // post the initial transition event
+  ThisEvent.EventType = ES_INIT;
+  if (ES_PostToService(MyPriority, ThisEvent) == true)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+/****************************************************************************
+ Function
+     PostGameLogicFSM
+
+ Parameters
+     EF_Event_t ThisEvent , the event to post to the queue
+
+ Returns
+     boolean False if the Enqueue operation failed, True otherwise
+
+ Description
+     Posts an event to this state machine's queue
+ Notes
+
+ Author
+     J. Edward Carryer, 10/23/11, 19:25
+****************************************************************************/
+bool PostGameLogicFSM(ES_Event_t ThisEvent)
+{
+  return ES_PostToService(MyPriority, ThisEvent);
+}
+
+/****************************************************************************
+ Function
+    RunGameLogicFSM
+
+ Parameters
+   ES_Event_t : the event to process
+
+ Returns
+   ES_Event_t, ES_NO_EVENT if no error ES_ERROR otherwise
+
+ Description
+   add your description here
+ Notes
+   uses nested switch/case to implement the machine.
+ Author
+   J. Edward Carryer, 01/15/12, 15:23
+****************************************************************************/
+ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
+{
+  ES_Event_t ReturnEvent;
+  ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
+
+  switch (CurrentState)
+  {
+    case P_Init_Game_s:        // If current state is initial Psedudo State
+    {
+      if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == IdleSetup_TIMER)
+      {
+        CurrentState = Setup_Game_s;
+        DB_printf("GameLogicFSM: Transition to Setup_Game_s\n");
+        ES_Timer_InitTimer(ActionAllowedTime_TIMER, ActionTimeAllowed);
+        ES_Event_t Event2Post;
+        Event2Post.EventType = ES_MOTOR_CW_CONTINUOUS;
+        Event2Post.EventParam = 70;
+        PostMotorService(Event2Post);
+        DB_printf("motor service posted, turning cw\n");
+        ES_Timer_InitTimer(ActionAllowedTime_TIMER, ActionTimeAllowed);
+        DB_printf("action allowed timer started with %d ms\n", ActionTimeAllowed);
+      }
+      
+    }
+    case Setup_Game_s:        // If current state is initial Psedudo State
+    {
+      if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == ActionAllowedTime_TIMER)
+      {
+        ES_Event_t Event2Post;
+        Event2Post.EventType = ES_MOTOR_CCW_CONTINUOUS;
+        Event2Post.EventParam = 70;
+        PostMotorService(Event2Post);
+        DB_printf("motor service posted, turning ccw\n");
+      }else if (ThisEvent.EventType == ES_BEACON_FOUND) 
+      {
+        CurrentState = FindTape_Game_s;
+        ES_Timer_StopTimer(ActionAllowedTime_TIMER);
+        DB_printf("GameLogicFSM: Transition to FindTape_Game_s\n");
+        ES_Event_t Event2Post;
+        Event2Post.EventType = ES_TAPE_LookForTape;
+        PostTapeFSM(Event2Post);
+        DB_printf("tape service posted, looking for tape\n");
+        Event2Post.EventType = ES_MOTOR_CW_CONTINUOUS;
+        Event2Post.EventParam = 70;
+        PostMotorService(Event2Post);
+        DB_printf("motor service posted, turning cw\n");
+      }
+    }
+    break;
+    case FindTape_Game_s:        // If current state is state one
+    {
+      if (ThisEvent.EventType == ES_TAPE_FOUND)
+      {
+        CurrentState = GoToStackB_Game_s;
+        DB_printf("GameLogicFSM: Transition to GoToStackB_Game_s\n");
+        ES_Event_t Event2Post;
+        Event2Post.EventType = ES_MOTOR_STOP;
+        PostMotorService(Event2Post);
+        DB_printf("motor service posted, stopping\n");
+        Event2Post.EventType = ES_TAPE_FOLLOW_REV;
+        Event2Post.EventParam = tape_follow_speed;
+        PostTapeFSM(Event2Post);
+        DB_printf("tape service posted, following tape in reverse\n");
+        
+      }
+      
+    }
+    break;
+    case GoToStackB_Game_s:
+    {
+
+    }
+    break;
+    case AligningToStack_Game_s:
+    {
+
+    }
+    break;
+    case GoingToStack_Game_s:
+    {
+
+    }
+    break;
+    case UnloadingCrate_Game_s:
+    {
+
+    }
+    break;
+    default:
+    break;
+  }                                   // end switch on Current State
+  return ReturnEvent;
+}
+
+/****************************************************************************
+ Function
+     QueryGameLogicSM
+
+ Parameters
+     None
+
+ Returns
+     GameLogicState_t The current state of the GameLogic state machine
+
+ Description
+     returns the current state of the GameLogic state machine
+ Notes
+
+ Author
+     J. Edward Carryer, 10/23/11, 19:21
+****************************************************************************/
+GameLogicState_t QueryGameLogicFSM(void)
+{
+  return CurrentState;
+}
+
+/***************************************************************************
+ private functions
+ ***************************************************************************/
+

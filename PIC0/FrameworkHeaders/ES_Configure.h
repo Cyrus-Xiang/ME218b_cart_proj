@@ -58,31 +58,31 @@
 #if NUM_SERVICES > 1
 // the header file with the public function prototypes
 
-#define SERV_1_HEADER "PlannerHSM.h"
+#define SERV_1_HEADER "GameLogicFSM.h"
 // the name of the Init function
-#define SERV_1_INIT InitPlannerHSM
+#define SERV_1_INIT InitGameLogicFSM
 // the name of the run function
-#define SERV_1_RUN RunPlannerHSM
+#define SERV_1_RUN RunGameLogicFSM
 #define SERV_1_QUEUE_SIZE 3
 #endif
 
 
-//#if NUM_SERVICES > 1
-//// the header file with the public function prototypes
-//
-//#define SERV_1_HEADER "TestHarnessService1.h"
-//// the name of the Init function
-//#define SERV_1_INIT InitTestHarnessService
-//// the name of the run function
-//#define SERV_1_RUN RunTestHarnessService01
-//#define SERV_1_QUEUE_SIZE 3
-//#endif
+// #if NUM_SERVICES > 1
+// // the header file with the public function prototypes
+
+// #define SERV_1_HEADER "TestHarnessService1.h"
+// // the name of the Init function
+// #define SERV_1_INIT InitTestHarnessService
+// // the name of the run function
+// #define SERV_1_RUN RunTestHarnessService01
+// #define SERV_1_QUEUE_SIZE 3
+// #endif
 
 /****************************************************************************/
 // These are the definitions for Service 2
 #if NUM_SERVICES > 2
 // the header file with the public function prototypes
-#define SERV_2_HEADER "KeyBoardService.h"
+#define SERV_2_HEADER "KeyboardService.h"
 // the name of the Init function
 #define SERV_2_INIT InitKeyboardService
 // the name of the run function

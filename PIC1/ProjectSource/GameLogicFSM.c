@@ -43,8 +43,8 @@
 // everybody needs a state variable, you may need others as well.
 // type of state variable should match htat of enum in header file
 #define ActionTimeAllowed 2000
-#define IdleTimeAtSetup 1000
-#define tape_follow_speed 90 // speed for tape following in duty cycle (max=100)
+#define IdleTimeAtSetup 3000
+#define tape_follow_speed 60 // speed for tape following in duty cycle (max=100)
 
 static GameLogicState_t CurrentState;
 
@@ -76,7 +76,7 @@ bool InitGameLogicFSM(uint8_t Priority)
 
   MyPriority = Priority;
   // put us into the Initial PseudoState
-  CurrentState = Setup_Game_s;
+  CurrentState = P_Init_Game_s;
   ES_Timer_InitTimer(IdleSetup_TIMER, IdleTimeAtSetup);
   // post the initial transition event
   ThisEvent.EventType = ES_INIT;
@@ -188,6 +188,8 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
         Event2Post.EventType = ES_MOTOR_STOP;
         PostMotorService(Event2Post);
         DB_printf("motor service posted, stopping\n");
+        Event2Post.EventType = ES_TAPE_STOP;
+        PostTapeFSM(Event2Post);
         Event2Post.EventType = ES_TAPE_FOLLOW_REV;
         Event2Post.EventParam = tape_follow_speed;
         PostTapeFSM(Event2Post);
@@ -199,6 +201,7 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
     break;
     case GoToStackB_Game_s:
     {
+      DB_printf("GoTOStackB_Game_s and received an event\n");
       if (ThisEvent.EventType == ES_RIGHT_INTERSECTION_DETECT)
       {
         CurrentState = AligningToStack_Game_s;

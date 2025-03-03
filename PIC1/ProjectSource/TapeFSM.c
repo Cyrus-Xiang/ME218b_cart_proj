@@ -198,13 +198,14 @@ ES_Event_t RunTapeFSM(ES_Event_t ThisEvent)
   if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == TapeTest_TIMER)
   {
     ES_Timer_InitTimer(TapeTest_TIMER, 2000);
-    DB_printf("Tape Test Timer\r\n");
+    //DB_printf("Tape Test Timer\r\n");
     ES_Event_t Event2Post;
     Event2Post.EventType = ES_TAPE_FOLLOW_REV;
     Event2Post.EventParam = 100;
     //PostTapeFSM(Event2Post);
     ADC_MultiRead(CurrADVal);
-    //DB_printf("[Line follow]: %d %d %d  %d %d %d\r\n", CurrADVal[0], CurrADVal[1], CurrADVal[2], CurrADVal[3], CurrADVal[4], CurrADVal[5]);
+    //DB_printf("[reflectance array]: %d %d %d  %d %d %d\r\n", CurrADVal[0], CurrADVal[1], CurrADVal[2], CurrADVal[3], CurrADVal[4], CurrADVal[5]);
+    //DB_printf("IR Sensor State: %d", PORTBbits.RB14);
     // Event2Post.EventType = ES_MOTOR_CW_CONTINUOUS;
     // Event2Post.EventParam = 70;
     //PostMotorService(Event2Post);
@@ -217,16 +218,18 @@ ES_Event_t RunTapeFSM(ES_Event_t ThisEvent)
     if (ThisEvent.EventType == ES_TAPE_FOLLOW_FWD)
     {
       CurrentState = Following_tapeFSM;
+      DB_printf("entering Following_tapeFSM \n");
       enterFollowing(0,ThisEvent.EventParam);
     }else if (ThisEvent.EventType == ES_TAPE_FOLLOW_REV)
     {
       DB_printf("eventparam is %d \n", ThisEvent.EventParam);
       CurrentState = Following_tapeFSM;
+      DB_printf("entering Following_tapeFSM \n");
       enterFollowing(1,ThisEvent.EventParam);
     }else if (ThisEvent.EventType == ES_TAPE_LookForTape)
     {
       CurrentState = Looking4Tape_tapeFSM;
-      DB_printf("Looking for tape111 \n");
+      DB_printf("entering Looking4Tape_tapeFSM \n");
       //turn on ISR to begin looking for tape
       T4CONbits.ON = 1;
     }
@@ -254,6 +257,7 @@ ES_Event_t RunTapeFSM(ES_Event_t ThisEvent)
     }
     DB_printf("Looking for tape, event sent to TapeService is ignored \n");
   }
+  break;
   default:
     break;
   } // end switch on Current State
@@ -293,7 +297,7 @@ static void enterFollowing(int Dir_input, uint16_t targetDutyCycle_input)
   Dir = Dir_input;
   // step3: get the duty cycle from the eventparam
   targetDutyCycle = targetDutyCycle_input;
-  K_effort_max = (float)PR2 * targetDutyCycle / 100; // PR2 is the max value for OCxRS
+  K_effort_max = (float)PR2 * targetDutyCycle / 100 - 1; // PR2 is the max value for OCxRS
   K_effort_min = -K_effort_max;
   //targetOC_ticks = (float)targetDutyCycle / 100 * PR2; //same as K_effort_max so don't need this
   //DB_printf("targetOC_ticks: %d\n", targetOC_ticks);
@@ -339,8 +343,9 @@ static void exitFollowing()
   OC3RS = 0;
   // step2: stop control ISR
   T4CONbits.ON = 0;
-  // step3: clean error integral
+  // step3: clean error integral and K_effort
   K_error_sum = 0;
+  K_effort = 0;
   return;
 }
 
@@ -429,6 +434,7 @@ static void ConfigureIntersectionSensor()
 {
   TRISAbits.TRISA3 = 1; // left IR sensor
   TRISBbits.TRISB14 = 1; // right IR sensor
+  ANSELBbits.ANSB14 = 0; // set RB14 as digital
   DB_printf("intersection sensor configured \n");
   return;
 }
@@ -448,6 +454,7 @@ void __ISR(_TIMER_4_VECTOR, IPL5SOFT) control_update_ISR(void)
       // DB_printf("T4 ISR entered \n");
       //DB_printf("%d %d %d  %d %d %d\r\n", CurrADVal[0], CurrADVal[1], CurrADVal[2], CurrADVal[3], CurrADVal[4], CurrADVal[5]);
       K_error = CurrADVal[0]*sensorWeights[0] + CurrADVal[1]*sensorWeights[1] + CurrADVal[2]*sensorWeights[2] - CurrADVal[3]*sensorWeights[3] - CurrADVal[4]*sensorWeights[4] - CurrADVal[5]*sensorWeights[5];
+      K_error = -K_error; // because the sensors are inverted
     // If K_error changed sign, clear the integral term
       if (K_error * K_error_prev < 0)
       {
@@ -457,7 +464,7 @@ void __ISR(_TIMER_4_VECTOR, IPL5SOFT) control_update_ISR(void)
       //this temp variable is for preventing the overflow of K_effort
       static int K_effort_temp;
       K_effort_temp = (float)K_error / K_error_max * Kp + (float)K_error_sum / K_error_max * Ki + (float)(K_error - K_error_prev) / K_error_max * Kd;
-      K_effort = 0;
+
       // anti-windup
       if (K_effort_temp < K_effort_max && K_effort_temp > K_effort_min)
       {
@@ -473,21 +480,21 @@ void __ISR(_TIMER_4_VECTOR, IPL5SOFT) control_update_ISR(void)
       switch (Dir)
       {
       case 0://meaning we are moving forward
-      if (K_effort >= 0)
-        {
-        // if K_effort is positive, that means the sensors on the left read more black than the right
-        //Cart has to turn right
-        // so the right motor should slow down
-          K_commandedOC4 =  K_effort_max;
-          K_commandedOC3 = K_effort_max - K_effort ;
-        }
-        else if (K_effort < 0)
-        {
-          // K_effort is negative, that means the sensors on the right read more black than the left
-          // so the left motor should slow down
-          K_commandedOC4 = K_effort_max + K_effort;
-          K_commandedOC3 = K_effort_max;
-        }
+        if (K_effort >= 0)
+          {
+          // if K_effort is positive, that means the sensors on the left read more black than the right
+          //Cart has to turn right
+          // so the right motor should slow down
+            K_commandedOC4 =  K_effort_max;
+            K_commandedOC3 = K_effort_max - K_effort ;
+          }
+          else if (K_effort < 0)
+          {
+            // K_effort is negative, that means the sensors on the right read more black than the left
+            // so the left motor should slow down
+            K_commandedOC4 = K_effort_max + K_effort;
+            K_commandedOC3 = K_effort_max;
+          }
       break;
       case 1://meaning we are moving backward
         if (K_effort >= 0)
@@ -515,10 +522,14 @@ void __ISR(_TIMER_4_VECTOR, IPL5SOFT) control_update_ISR(void)
       switch (Dir)
       {
       case 0://meaning we are moving forward
+          H_bridge1A_LAT = 0;
+        H_bridge3A_LAT = 0;
         OC4RS = K_commandedOC4;
         OC3RS = K_commandedOC3;
         break;
       case 1://meaning we are moving backward
+        H_bridge1A_LAT = 1;
+        H_bridge3A_LAT = 1;
         OC4RS = PR2 - K_commandedOC4;
         OC3RS = PR2 - K_commandedOC3;
         break;

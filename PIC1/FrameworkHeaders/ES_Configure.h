@@ -33,7 +33,7 @@
 /****************************************************************************/
 // This macro determines that nuber of services that are *actually* used in
 // a particular application. It will vary in value from 1 to MAX_NUM_SERVICES
-#define NUM_SERVICES 6
+#define NUM_SERVICES 5
 
 /****************************************************************************/
 // These are the definitions for Service 0, the lowest priority service.
@@ -70,11 +70,11 @@
 // // These are the definitions for Service 2
 #if NUM_SERVICES > 2
 // the header file with the public function prototypes
-#define SERV_2_HEADER "MotorService.h"
+#define SERV_2_HEADER "TapeFSM.h"
 // the name of the Init function
-#define SERV_2_INIT InitMotorService
+#define SERV_2_INIT InitTapeFSM
 // the name of the run function
-#define SERV_2_RUN RunMotorService
+#define SERV_2_RUN RunTapeFSM
 // How big should this services Queue be?
 #define SERV_2_QUEUE_SIZE 3
 #endif

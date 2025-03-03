@@ -149,3 +149,11 @@ bool Check4IntersectionIR(void){
   lastLeftIR_state = leftIR_state;
   return ReturnVal;
 }
+// bool Check4IntersectionIR(){
+//   if (PORTBbits.RB14 == 1)
+//   {
+//     DB_printf("Right IR detected in eventcheker and event posted\n\r");
+//   }
+  
+//   return false;
+// }

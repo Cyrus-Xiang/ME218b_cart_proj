@@ -45,6 +45,7 @@
 #define ActionTimeAllowed 2000
 #define IdleTimeAtSetup 3000
 #define tape_follow_speed 60 // speed for tape following in duty cycle (max=100)
+#define rotate_speed 50 // speed for rotating in duty cycle (max=100)
 
 static GameLogicState_t CurrentState;
 
@@ -145,7 +146,7 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
         ES_Timer_InitTimer(ActionAllowedTime_TIMER, ActionTimeAllowed);
         ES_Event_t Event2Post;
         Event2Post.EventType = ES_MOTOR_CW_CONTINUOUS;
-        Event2Post.EventParam = 70;
+        Event2Post.EventParam = rotate_speed;
         PostMotorService(Event2Post);
         DB_printf("motor service posted, turning cw\n");
         ES_Timer_InitTimer(ActionAllowedTime_TIMER, ActionTimeAllowed);
@@ -159,7 +160,7 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
       {
         ES_Event_t Event2Post;
         Event2Post.EventType = ES_MOTOR_CCW_CONTINUOUS;
-        Event2Post.EventParam = 70;
+        Event2Post.EventParam = rotate_speed;
         PostMotorService(Event2Post);
         DB_printf("motor service posted, turning ccw\n");
       }else if (ThisEvent.EventType == ES_BEACON_FOUND) 
@@ -172,7 +173,7 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
         PostTapeFSM(Event2Post);
         DB_printf("tape service posted, looking for tape\n");
         Event2Post.EventType = ES_MOTOR_CW_CONTINUOUS;
-        Event2Post.EventParam = 70;
+        Event2Post.EventParam = rotate_speed;
         PostMotorService(Event2Post);
         DB_printf("motor service posted, turning cw\n");
       }
@@ -211,7 +212,7 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
         PostTapeFSM(Event2Post);
              DB_printf("tape service posted, stopping\n");
         Event2Post.EventType = ES_MOTOR_CCW_CONTINUOUS;
-        Event2Post.EventParam = 70;
+        Event2Post.EventParam = rotate_speed;
         PostMotorService(Event2Post);
         DB_printf("motor service posted, turning ccw\n");
         Event2Post.EventType = ES_TAPE_LookForTape;

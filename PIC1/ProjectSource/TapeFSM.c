@@ -71,8 +71,8 @@ static uint8_t Dir = 0; // the direction of the motor, 0 = forward, 1 = backward
 #define Control_interval 10 // in ms, max value with prescalar of 16 is 65535*16/20MHz = 52.4288ms
 //the K values used will be scaled based on commanded targetDutyCycle
 //because when the cart is moving faster, K values should be smaller to avoid aggressive control
-#define Kp_base 650
-#define Ki_base 300
+#define Kp_base 350
+#define Ki_base 160
 #define Kd_base 0
 static int16_t Kp;
 static int16_t Ki;

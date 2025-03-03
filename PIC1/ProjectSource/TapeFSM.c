@@ -533,7 +533,7 @@ void __ISR(_TIMER_4_VECTOR, IPL5SOFT) control_update_ISR(void)
         exitFollowing();
         ES_Event_t Event2Post;
         Event2Post.EventType = ES_TAPE_FAIL;
-        PostNavigatorHSM(Event2Post);
+        PostGameLogicFSM(Event2Post);
         DB_printf("Cart is not on line anymore\r\n");
       }
   }else if (CurrentState == Looking4Tape_tapeFSM)
@@ -545,7 +545,7 @@ void __ISR(_TIMER_4_VECTOR, IPL5SOFT) control_update_ISR(void)
       DB_printf("Found tape \n");
       ES_Event_t Event2Post;
       Event2Post.EventType = ES_TAPE_FOUND;
-      PostNavigatorHSM(Event2Post);
+      PostGameLogicFSM(Event2Post);
       Event2Post.EventType = ES_TAPE_STOP;
       PostTapeFSM(Event2Post);
       CurrentState = Idle_tapeFSM;

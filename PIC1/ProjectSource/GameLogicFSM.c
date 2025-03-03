@@ -29,6 +29,8 @@
 #include "dbprintf.h"
 #include <sys/attribs.h>
 #include "terminal.h"
+#include "MotorService.h"
+#include "TapeFSM.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -197,12 +199,41 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
     break;
     case GoToStackB_Game_s:
     {
+      if (ThisEvent.EventType == ES_RIGHT_INTERSECTION_DETECT)
+      {
+        CurrentState = AligningToStack_Game_s;
+        DB_printf("GameLogicFSM: Transition to AligningToStack_Game_s\n");
+        ES_Event_t Event2Post;
+        Event2Post.EventType = ES_TAPE_STOP;
+        PostTapeFSM(Event2Post);
+             DB_printf("tape service posted, stopping\n");
+        Event2Post.EventType = ES_MOTOR_CCW_CONTINUOUS;
+        Event2Post.EventParam = 70;
+        PostMotorService(Event2Post);
+        DB_printf("motor service posted, turning ccw\n");
+        Event2Post.EventType = ES_TAPE_LookForTape;
+        PostTapeFSM(Event2Post);
+        DB_printf("tape service posted, looking for tape\n");
 
+      }
+      
     }
     break;
     case AligningToStack_Game_s:
     {
-
+      if (ThisEvent.EventType == ES_TAPE_FOUND)
+      {
+        CurrentState = GoingToStack_Game_s;
+        DB_printf("GameLogicFSM: Transition to GoingToStack_Game_s\n");
+        ES_Event_t Event2Post;
+        Event2Post.EventType = ES_MOTOR_STOP;
+        PostMotorService(Event2Post);
+        DB_printf("motor service posted, stopping\n");
+        Event2Post.EventType = ES_TAPE_FOLLOW_REV;
+        Event2Post.EventParam = tape_follow_speed;
+        PostTapeFSM(Event2Post);
+        DB_printf("tape service posted, following tape in reverse\n");
+      }
     }
     break;
     case GoingToStack_Game_s:

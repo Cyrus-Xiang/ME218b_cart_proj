@@ -43,6 +43,7 @@
 // This is the event checking function sample. It is not intended to be
 // included in the module. It is only here as a sample to guide you in writing
 // your own event checkers
+#include "dbprintf.h"
 #if 0
 /****************************************************************************
  Function
@@ -131,14 +132,14 @@ bool Check4IntersectionIR(void){
     if(rightIR_state != lastRightIR_state || leftIR_state != lastLeftIR_state){
         if(leftIR_state){
             ThisEvent.EventType= ES_LEFT_INTERSECTION_DETECT;
-            PostPlannerHSM(ThisEvent);
+            PostGameLogicFSM(ThisEvent);
             ReturnVal = true;
             DB_printf("Left IR detected in eventcheker and event posted\n\r");
         }
 
         if (rightIR_state){
             ThisEvent.EventType= ES_RIGHT_INTERSECTION_DETECT;
-            PostPlannerHSM(ThisEvent);
+            PostGameLogicFSM(ThisEvent);
             ReturnVal = true;
             DB_printf("Right IR detected in eventcheker and event posted\n\r");
         }

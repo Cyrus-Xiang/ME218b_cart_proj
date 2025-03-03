@@ -68,16 +68,16 @@
 
 /****************************************************************************/
 // // These are the definitions for Service 2
-// #if NUM_SERVICES > 2
-// // the header file with the public function prototypes
-// #define SERV_2_HEADER "SPIFollowerService.h"
-// // the name of the Init function
-// #define SERV_2_INIT InitSPIFollowerService
-// // the name of the run function
-// #define SERV_2_RUN RunSPIFollowerService
-// // How big should this services Queue be?
-// #define SERV_2_QUEUE_SIZE 3
-// #endif
+#if NUM_SERVICES > 2
+// the header file with the public function prototypes
+#define SERV_2_HEADER "MotorService.h"
+// the name of the Init function
+#define SERV_2_INIT InitMotorService
+// the name of the run function
+#define SERV_2_RUN RunMotorService
+// How big should this services Queue be?
+#define SERV_2_QUEUE_SIZE 3
+#endif
 
 /****************************************************************************/
 // These are the definitions for Service 3

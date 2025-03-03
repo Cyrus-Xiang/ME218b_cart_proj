@@ -45,7 +45,7 @@
 #define ActionTimeAllowed 2000
 #define IdleTimeAtSetup 3000
 #define tape_follow_speed 60 // speed for tape following in duty cycle (max=100)
-#define rotate_speed 50 // speed for rotating in duty cycle (max=100)
+#define rotate_speed 30 // speed for rotating in duty cycle (max=100)
 
 static GameLogicState_t CurrentState;
 

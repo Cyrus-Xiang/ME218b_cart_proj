@@ -310,6 +310,9 @@ typedef enum
   ES_SEND_NEW_NAV_CMD,
   ES_ROTATE_ZERO,
   ES_ROTATE_90,
+
+  //new events
+
 } ES_EventType_t;
 
 /****************************************************************************/
@@ -362,8 +365,8 @@ typedef enum
 #define TIMER6_RESP_FUNC TIMER_UNUSED
 #define TIMER7_RESP_FUNC PostJoint2ServoService
 #define TIMER8_RESP_FUNC PostJoint1ServoService
-#define TIMER9_RESP_FUNC TIMER_UNUSED
-#define TIMER10_RESP_FUNC TIMER_UNUSED
+#define TIMER9_RESP_FUNC PostGameLogicFSM
+#define TIMER10_RESP_FUNC PostGameLogicFSM
 #define TIMER11_RESP_FUNC TIMER_UNUSED
 #define TIMER12_RESP_FUNC PostStepperService
 #define TIMER13_RESP_FUNC PostBeaconIndicatorService
@@ -383,5 +386,7 @@ typedef enum
 #define Stepper_TIMER 12
 #define JOINT1_SERVO_TIMER 8
 #define JOINT2_SERVO_TIMER 7
+#define ActionAllowedTime_TIMER 9
+#define IdleSetup_TIMER 10
 
 #endif /* ES_CONFIGURE_H */

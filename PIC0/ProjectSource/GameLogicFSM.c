@@ -26,6 +26,9 @@
 #include "ES_Configure.h"
 #include "ES_Framework.h"
 #include "GameLogicFSM.h"
+#include "dbprintf.h"
+#include <sys/attribs.h>
+#include "terminal.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -37,6 +40,10 @@
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well.
 // type of state variable should match htat of enum in header file
+#define ActionTimeAllowed 2000
+#define IdleTimeAtSetup 1000
+
+
 static GameLogicState_t CurrentState;
 
 // with the introduction of Gen2, we need a module level Priority var as well
@@ -67,7 +74,8 @@ bool InitGameLogicFSM(uint8_t Priority)
 
   MyPriority = Priority;
   // put us into the Initial PseudoState
-  CurrentState = Stepup_Game_s;
+  CurrentState = Setup_Game_s;
+  ES_Timer_InitTimer(IdleSetup_TIMER, IdleTimeAtSetup);
   // post the initial transition event
   ThisEvent.EventType = ES_INIT;
   if (ES_PostToService(MyPriority, ThisEvent) == true)
@@ -126,11 +134,29 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
 
   switch (CurrentState)
   {
+    case P_Init_Game_s:        // If current state is initial Psedudo State
+    {
+      if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == IdleSetup_TIMER)
+      {
+        CurrentState = Setup_Game_s;
+        ES_Timer_InitTimer(ActionAllowedTime_TIMER, ActionTimeAllowed);
+        //PostMotorService();
+        DB_printf("GameLogicFSM: Transition to Setup_Game_s\n");
+      }
+      
+    }
     case Setup_Game_s:        // If current state is initial Psedudo State
     {
-      if (ThisEvent.EventType == ES_INIT)    // only respond to ES_Init
+      switch (ThisEvent.EventType)
       {
-
+        case ES_TIMEOUT:
+        {
+          if (ThisEvent.EventParam == IdleSetup_TIMER)
+          {
+            
+          }
+        }
+        break;
       }
     }
     case FindTape_Game_s:        // If current state is state one

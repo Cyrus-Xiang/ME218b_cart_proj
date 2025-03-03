@@ -44,8 +44,8 @@
 // type of state variable should match htat of enum in header file
 #define ActionTimeAllowed 2000
 #define IdleTimeAtSetup 3000
-#define tape_follow_speed 60 // speed for tape following in duty cycle (max=100)
-#define rotate_speed 30 // speed for rotating in duty cycle (max=100)
+#define tape_follow_speed 45 // speed for tape following in duty cycle (max=100)
+#define rotate_speed 40 // speed for rotating in duty cycle (max=100)
 
 static GameLogicState_t CurrentState;
 

@@ -91,7 +91,7 @@ bool InitServoService(uint8_t Priority)
     ConfigTimer3();
     ConfigPWM_OC4();
     //PR3 = 399999;
-    DutyCycle = INIT_PWM;
+    DutyCycle = BLUE_PWM;
 
     // post the initial transition event
     ThisEvent.EventType = ES_INIT;
@@ -123,7 +123,7 @@ ES_Event_t RunServoService(ES_Event_t ThisEvent)
     break;
     
     case ES_SIDE_DETECTED:
-        DetectedBeacon ==ThisEvent.EventParam;
+        DetectedBeacon =ThisEvent.EventParam;
         if (DetectedBeacon == BEACON_B || DetectedBeacon == BEACON_L){
             DutyCycle = BLUE_PWM;
         }else if (DetectedBeacon == BEACON_G || DetectedBeacon == BEACON_R){
@@ -132,7 +132,11 @@ ES_Event_t RunServoService(ES_Event_t ThisEvent)
         OC4RS = (float)(PR3 + 1) * DutyCycle / 100;
         DB_printf("ES_SIDE_DETECTED is  %d\n", DetectedBeacon);
     break;
-     
+    case ES_SERVO_IND_RESET:
+        DutyCycle = INIT_PWM;
+        OC4RS = (float)(PR3 + 1) * DutyCycle / 100;
+        DB_printf("servo side indicator is reset to neutral\n");
+    break;
     default:
         break;
     } // end switch on Current State

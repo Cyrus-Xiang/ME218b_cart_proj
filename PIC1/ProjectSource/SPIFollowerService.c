@@ -215,7 +215,7 @@ void __ISR(_SPI_2_VECTOR, IPL6SOFT) SPIFollowerISR(void) {
         CmdEvent.EventParam = ReceivedCmd;
         PostDataReceiverService(CmdEvent);
         // new added code for debugging
-        NavigatorState_t currentState = QueryDataReceiverServiceState();
+        NavigatorState_t currentState = QueryGameLogicFSM();
         switch (currentState) {
             case Idle:
                 CurrentNavStatus = NAV_STATUS_IDLE;

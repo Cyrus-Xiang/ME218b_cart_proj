@@ -24,10 +24,11 @@
 #include "ES_Framework.h"
 #include "KeyboardService.h"
 #include "dbprintf.h"
+#include "ServoService.h"
 
 
 /*----------------------------- Module Defines ----------------------------*/
-
+#define CMD_MOTOR_MOVE_FORWARDS 0xA3
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this service.They should be functions
    relevant to the behavior of this service
@@ -148,7 +149,10 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
         /* code */
         break;
     case 'g':
-        /* code */
+        Event2Post.EventType = ES_NEW_MOTOR_CMD;
+        Event2Post.EventParam = CMD_MOTOR_MOVE_FORWARDS;
+        PostSPIMasterService(Event2Post);
+        DB_printf("ES_MOTOR_MOVE_FORWARD posted to MasterService\r\n");
         break;
     case 'h':
         /* code */
@@ -247,13 +251,21 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
 
     break;
     case 'B':
-        /* code */
+        Event2Post.EventType = ES_SIDE_DETECTED;
+        Event2Post.EventParam = BEACON_B;
+        PostServoService(Event2Post);
+        DB_printf("keyboard posted side indication request to servo side indicator service \n");
         break;
     case 'C':
-        /* code */
+        Event2Post.EventType = ES_SERVO_IND_RESET;
+        PostServoService(Event2Post);
+        DB_printf("keyboard posted side indication reset request to servo side indicator service \n");
         break;
     case 'D':
-        /* code */
+                Event2Post.EventType = ES_SIDE_DETECTED;
+        Event2Post.EventParam = BEACON_G;
+        PostServoService(Event2Post);
+        DB_printf("keyboard posted side indication request to servo side indicator service \n");
         break;
     case 'E':
         /* code */

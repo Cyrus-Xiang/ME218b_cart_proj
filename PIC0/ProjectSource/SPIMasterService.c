@@ -15,7 +15,7 @@ volatile static uint16_t CurrentNavigatorStatus;
 volatile static uint16_t PrevNavigatorStatus = NAV_STATUS_IDLE;
 static uint32_t LastTransferTime;
 static uint8_t LastSentCmd;
-static uint16_t QueryFreq = 5000; // in msq
+static uint16_t QueryFreq = 500; // in msq
 #define DEBUG_CMD NAV_CMD_QUERY_STATUS
 
 /*---------------------------- Module Functions ---------------------------*/
@@ -145,6 +145,9 @@ ES_Event_t RunSPIMasterService(ES_Event_t ThisEvent)
         if (ThisEvent.EventType == ES_NEW_NAV_CMD && ThisEvent.EventParam != 0) {
             SendSPICommand(ThisEvent.EventParam);
             DB_printf("We are Sending SPI param command ...\r\n");
+        }else if (ThisEvent.EventType == ES_NEW_MOTOR_CMD){
+            SendSPICommand(ThisEvent.EventParam);
+            DB_printf("We are Sending motor command from SPI Master...\r\n");           
         }
     }
 
@@ -229,8 +232,8 @@ void __ISR(_SPI_1_VECTOR, IPL6SOFT) SPIMasterISR(void) {
             CmdEvent.EventParam = ReceivedStatus;
             PostSimpleHSM(CmdEvent);
         } else if (PrevNavigatorStatus != ReceivedStatus) {
-            DB_printf("[SPI] Previous status: %s\r\n", TranslateNavStatusToStr(PrevNavigatorStatus));
-            DB_printf("[SPI] Received status: %s\r\n", TranslateNavStatusToStr(ReceivedStatus));
+            DB_printf("[SPI] Previous status!!!: %s\r\n", TranslateNavStatusToStr(PrevNavigatorStatus));
+            DB_printf("[SPI] Received status!!!: %s\r\n", TranslateNavStatusToStr(ReceivedStatus));
             CmdEvent.EventType = ES_NAVIGATOR_STATUS_CHANGE;
             CmdEvent.EventParam = ReceivedStatus;
             PostSimpleHSM(CmdEvent);

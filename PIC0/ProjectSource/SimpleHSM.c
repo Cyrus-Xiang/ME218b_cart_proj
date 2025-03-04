@@ -48,7 +48,7 @@ ES_Event_t RunSimpleHSM(ES_Event_t ThisEvent) {
                 DB_printf("[HSM] Sending SPI Command...\r\n");
                 ES_Event_t SpiEvent;
                 SpiEvent.EventType = ES_NEW_NAV_CMD;
-                SpiEvent.EventParam = 0x4; // Example byte to send
+                SpiEvent.EventParam = 0x9; // Example byte to send
                 PostSPIMasterService(SpiEvent);
                 CurrentState = WAIT_STATE;
             }

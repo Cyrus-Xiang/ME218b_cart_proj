@@ -46,7 +46,7 @@
 #define IdleTimeAtSetup 3000
 #define RotateGuranteeTime 1000 //for the time between we send out rotate command and find tape command in aligning to stack state
 #define TapeFollowGuranteeTime 2000 //time that is guranteed for tape following to be executed 
-#define tape_follow_speed 45 // speed for tape following in duty cycle (max=100)
+#define tape_follow_speed 65 // speed for tape following in duty cycle (max=100)
 #define rotate_speed 40 // speed for rotating in duty cycle (max=100)
 
 static GameLogicState_t CurrentState;

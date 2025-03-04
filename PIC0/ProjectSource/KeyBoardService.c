@@ -149,7 +149,7 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
         break;
     case 'g':
         Event2Post.EventType = ES_NEW_MOTOR_CMD;
-        Event2Post.EventParam = MOTOR_MOVE_FORWARDS;
+        Event2Post.EventParam = CMD_MOTOR_MOVE_FORWARDS;
         PostSPIMasterService(Event2Post);
         DB_printf("ES_MOTOR_MOVE_FORWARD posted to MasterService\r\n");
         break;

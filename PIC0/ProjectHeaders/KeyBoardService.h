@@ -6,7 +6,7 @@
 #include "ES_Configure.h"
 #include "ES_Framework.h"
 
-#define MOTOR_MOVE_FORWARDS 0xA3
+#define CMD_MOTOR_MOVE_FORWARDS 0xA3
 
 /*---------------------------- Public Functions ----------------------------*/
 bool InitKeyboardService(uint8_t Priority);

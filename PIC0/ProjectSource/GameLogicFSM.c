@@ -29,7 +29,8 @@
 #include "dbprintf.h"
 #include <sys/attribs.h>
 #include "terminal.h"
-
+#include "ServoService.h"
+#include "BeaconIndicatorService.h"
 /*----------------------------- Module Defines ----------------------------*/
 
 /*---------------------------- Module Functions ---------------------------*/
@@ -43,7 +44,7 @@ static void exitGame(void);
 #define ActionTimeAllowed 2000
 #define IdleTimeAtSetup 1000
 #define InGameLED_LAT LATBbits.LATB3
-#define GameTotalAllowedTime 3000
+#define GameTotalAllowedTime 10000
 static GameLogicState_t CurrentState;
 
 // with the introduction of Gen2, we need a module level Priority var as well
@@ -155,6 +156,10 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
         InGameLED_LAT = 1;
         ES_Timer_InitTimer(GameTotalTime_TIMER,GameTotalAllowedTime);
         CurrentState = Wait4PIC1_Game_s;
+        DB_printf("transition from P_init_game_s to Wait4PIC1_Game_s\n");
+        ES_Event_t Event2Post = {ES_GAME_START_BUTTON_PRESSED, 0};
+        PostSPIMasterService(Event2Post); // tell PIC1 that game has started
+
       }
       
     }
@@ -164,15 +169,15 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
       {
         case ES_SIDE_DETECTED:
         {
-          ES_Event_t Event2Post;
-          Event2Post.EventType = ES_SIDE_DETECTED;
-          Event2Post.EventParam = ThisEvent.EventParam;
-          PostServoService(Event2Post);
+          PostServoService(ThisEvent);
           DB_printf("GameFSM posted side indication request to servo side indicator service \n");
           //disable the beacon detection interrupt to save CPU resources
-          IC1CONbits.ON = 0;
+          //IC1CONbits.ON = 0;
+          ES_Event_t Event2Post = {ES_BEACON_DETECTED, 0};
+          PostSPIMasterService(Event2Post); // tell PIC1 beacon has been detected
         }
         break;
+        
         default:
         break;
       }
@@ -216,5 +221,8 @@ GameLogicState_t QueryGameLogicFSM(void)
  ***************************************************************************/
 static void exitGame(void){
   InGameLED_LAT = 0;
+  ES_Event_t Event2Post;
+  Event2Post.EventType = ES_SERVO_IND_RESET;
+  PostServoService(Event2Post);
   return;
 }

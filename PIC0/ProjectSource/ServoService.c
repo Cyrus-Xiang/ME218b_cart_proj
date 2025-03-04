@@ -91,7 +91,7 @@ bool InitServoService(uint8_t Priority)
     ConfigTimer3();
     ConfigPWM_OC4();
     //PR3 = 399999;
-    DutyCycle = BLUE_PWM;
+    DutyCycle = INIT_PWM;
 
     // post the initial transition event
     ThisEvent.EventType = ES_INIT;

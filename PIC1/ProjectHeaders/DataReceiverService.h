@@ -18,7 +18,8 @@ typedef enum {
     CheckCrate,
     AlignTape,
     TapeAligned,
-    LineDiscoverFail
+    LineDiscoverFail,
+    
 } NavigatorState_t;
 
 

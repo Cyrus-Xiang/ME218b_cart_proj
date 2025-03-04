@@ -14,7 +14,7 @@
 #define NAV_CMD_TURN_LEFT 0x30
 #define NAV_CMD_TURN_RIGHT 0x40
 #define NAV_CMD_STOP 0x50
-#define NAV_CMD_TURN_CW 0x60 // Clockwise 180 degrees
+// #define NAV_CMD_TURN_CW 0x60 // Clockwise 180 degrees
 #define NAV_CMD_TURN_CCW 0x70 // Counter-clockwise 180 degrees
 #define NAV_CMD_ALIGN 0x90
 
@@ -47,6 +47,9 @@
 #define NAV_STATUS_CHECK_CRATE 0x5C
 #define NAV_STATUS_INIT 0x5D
 #define NAV_STATUS_TAPE_ALIGNED 0x5E
+//defined by Cyrus:
+#define PIC1_UNLOADING_CRATE 0x5F
+#define PIC1_PICKING_UP_CRATE 0x60
 
 bool InitSPIFollowerService(uint8_t Priority);
 bool PostSPIFollowerService(ES_Event_t ThisEvent);

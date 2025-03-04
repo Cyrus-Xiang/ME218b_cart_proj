@@ -25,7 +25,8 @@
 #include "KeyboardService.h"
 #include "dbprintf.h"
 #include "ServoService.h"
-
+#include "SPIMasterService.h"
+#include "GameLogicFSM.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 #define CMD_MOTOR_MOVE_FORWARDS 0xA3
@@ -248,24 +249,24 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
         /* code */
         break;
     case 'A':
-
+        Event2Post.EventType = ES_SIDE_DETECTED;
+        Event2Post.EventParam = BEACON_G;
+        PostGameLogicFSM(Event2Post);
+        DB_printf("keyboard posted side indication request to servo side indicator service \n");
     break;
     case 'B':
         Event2Post.EventType = ES_SIDE_DETECTED;
         Event2Post.EventParam = BEACON_B;
-        PostServoService(Event2Post);
+        PostGameLogicFSM(Event2Post);
         DB_printf("keyboard posted side indication request to servo side indicator service \n");
         break;
     case 'C':
-        Event2Post.EventType = ES_SERVO_IND_RESET;
-        PostServoService(Event2Post);
-        DB_printf("keyboard posted side indication reset request to servo side indicator service \n");
+        // Event2Post.EventType = ES_SERVO_IND_RESET;
+        // PostGameLogicFSM(Event2Post);
+        // DB_printf("keyboard posted side indication reset request to servo side indicator service \n");
         break;
     case 'D':
-                Event2Post.EventType = ES_SIDE_DETECTED;
-        Event2Post.EventParam = BEACON_G;
-        PostServoService(Event2Post);
-        DB_printf("keyboard posted side indication request to servo side indicator service \n");
+
         break;
     case 'E':
         /* code */

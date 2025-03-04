@@ -11,7 +11,6 @@
 //#include "../ProjectHeaders/MyMotorService.h"
 //#include "../ProjectHeaders/PIC32_AD_Lib.h"
 //#include "RobotFSM.h"
-#include "PlannerHSM.h"
 
 // Hardware
 #include <sys/attribs.h>
@@ -26,6 +25,7 @@
 #include "dbprintf.h"
 #include "BeaconIndicatorService.h"
 #include "ServoService.h"
+#include "GameLogicFSM.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -108,24 +108,24 @@ ES_Event_t RunBeaconIndicatorService(ES_Event_t ThisEvent) {
     uint8_t dutyCycle = 100;
 
     switch (ThisEvent.EventType) {
-        case ES_REQUEST_SIDE_DETECTION:
-            DB_printf("\r Receive Side detection request: Start Aligning\r\n");
-            ES_Timer_InitTimer(BEACON_ALIGN_TIMER, ALIGNMENT_TIMEOUT);
-            break;
-        case ES_TIMEOUT:
-            if (ThisEvent.EventParam == BEACON_ALIGN_TIMER) {
-                if (aligned){
-                    DB_printf("Aligned succeed,R\n");
-                    DB_printf("Detected Frequency: %d\n", detectedFreq);
-                    ES_Event_t Event2Post = {ES_SIDE_DETECTED, DetectedBeacon};
-                    PostGameLogicFSM(Event2Post);
-                }else{
-                  DB_printf("Aligned failed, stopping motor.. R\n"); 
-                  ES_Event_t Event2Post = {ES_SIDE_DETECTED, BEACON_UNKNOWN};
-                  PostGameLogicFSM(Event2Post);
-                }
-            }
-            break;
+        // case ES_REQUEST_SIDE_DETECTION:
+        //     DB_printf("\r Receive Side detection request: Start Aligning\r\n");
+        //     ES_Timer_InitTimer(BEACON_ALIGN_TIMER, ALIGNMENT_TIMEOUT);
+        //     break;
+        // case ES_TIMEOUT:
+        //     if (ThisEvent.EventParam == BEACON_ALIGN_TIMER) {
+        //         if (aligned){
+        //             DB_printf("Aligned succeed,R\n");
+        //             DB_printf("Detected Frequency: %d\n", detectedFreq);
+        //             ES_Event_t Event2Post = {ES_SIDE_DETECTED, DetectedBeacon};
+        //             PostGameLogicFSM(Event2Post);
+        //         }else{
+        //           DB_printf("Aligned failed, stopping motor.. R\n"); 
+        //           ES_Event_t Event2Post = {ES_SIDE_DETECTED, BEACON_UNKNOWN};
+        //           PostGameLogicFSM(Event2Post);
+        //         }
+        //     }
+        //     break;
 
         default:
             break;
@@ -136,39 +136,6 @@ ES_Event_t RunBeaconIndicatorService(ES_Event_t ThisEvent) {
 /***************************************************************************
  * Private Functions
  ***************************************************************************/
-
-// void ConfigTimer2() {
-//     T2CONbits.ON = 0;
-//     T2CONbits.TCS = 0;
-//     T2CONbits.TCKPS = 0b000;
-//     TMR2 = 0;
-//     PR2 = PIC_FREQ / (PWM_FREQ * TIMER2_PRESCALE) - 1;
-
-//     IFS0CLR = _IFS0_T2IF_MASK;
-//     IEC0CLR = _IEC0_T2IE_MASK;
-// }
-
-// void ConfigPWM_OC1() {
-//     RPB3R = 0b0101;
-//     OC1CON = 0;
-//     OC1CONbits.OCM = 0b110;
-//     OC1CONbits.OCTSEL = 0;
-//     OC1RS = 0;
-//     OC1R = 0;
-//     T2CONbits.ON = 1;
-//     OC1CONbits.ON = 1;
-// }
-
-// void ConfigPWM_OC3() {
-//     RPB10R = 0b0101;
-//     OC3CON = 0;
-//     OC3CONbits.OCM = 0b110;
-//     OC3CONbits.OCTSEL = 0;
-//     OC3RS = 0;
-//     OC3R = 0;
-//     OC3CONbits.ON = 1;
-// }
-
 void ConfigTimer3() {
     T3CONbits.ON = 0;
     T3CONbits.TCS = 0;
@@ -182,18 +149,6 @@ void ConfigTimer3() {
     T3CONbits.ON = 1;
 }
 
-// void Config_IC2() {
-//     IC2CONbits.ON = 0;
-//     IC2CONbits.C32 = 0;
-//     IC2CONbits.ICTMR = 0;
-//     IC2CONbits.ICI = 0b00;
-//     IC2CONbits.ICM = 0b011;
-
-//     IFS0CLR = _IFS0_IC2IF_MASK;
-//     IPC2bits.IC2IP = 7;
-//     IEC0SET = _IEC0_IC2IE_MASK;
-//     IC2CONbits.ON = 1;
-// }
 void Config_IC1() {
     IC1CONbits.ON = 0;
     IC1CONbits.C32 = 0;

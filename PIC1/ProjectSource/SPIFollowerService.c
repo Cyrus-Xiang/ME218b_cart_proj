@@ -5,7 +5,7 @@
 #include "SPIFollowerService.h"
 #include "dbprintf.h"
 #include "DataReceiverService.h"
-
+#include "GameLogicFSM.h"
 /*---------------------------- Module Variables ---------------------------*/
 static uint8_t MyPriority;
 volatile static uint8_t ReceivedCmd;
@@ -215,35 +215,13 @@ void __ISR(_SPI_2_VECTOR, IPL6SOFT) SPIFollowerISR(void) {
         CmdEvent.EventParam = ReceivedCmd;
         PostDataReceiverService(CmdEvent);
         // new added code for debugging
-        NavigatorState_t currentState = QueryGameLogicFSM();
+        GameLogicState_t currentState = QueryGameLogicFSM();
         switch (currentState) {
-            case Idle:
-                CurrentNavStatus = NAV_STATUS_IDLE;
+            case UnloadingCrate_Game_s:
+                CurrentNavStatus = PIC1_UNLOADING_CRATE;
                 break;
-            case LineFollowForward:
-            case LineFollowBackward:
-                CurrentNavStatus = NAV_STATUS_LINE_FOLLOW;
-                break;
-            case AlignBeacon:
-                CurrentNavStatus = NAV_STATUS_ALIGN_TAPE;
-                break;
-            case CheckIntersection:
-                CurrentNavStatus = NAV_STATUS_CHECK_INTERSECTION;
-                break;
-            case TurnLeft:
-                CurrentNavStatus = NAV_STATUS_TURN_LEFT;
-                break;
-            case TurnRight:
-                CurrentNavStatus = NAV_STATUS_TURN_RIGHT;
-                break;
-            case LineDiscover:
-                CurrentNavStatus = NAV_STATUS_LINE_DISCOVER;
-                break;
-            case CheckCrate:
-                CurrentNavStatus = NAV_STATUS_CHECK_CRATE;
-                break;
-            case TapeAligned:
-                CurrentNavStatus = NAV_STATUS_TAPE_ALIGNED;
+            case PickingUpCrate_Game_s:
+                CurrentNavStatus = PIC1_PICKING_UP_CRATE;
                 break;
             default:
                 CurrentNavStatus = NAV_STATUS_ERROR;

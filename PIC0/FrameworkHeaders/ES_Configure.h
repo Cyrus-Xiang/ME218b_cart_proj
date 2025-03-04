@@ -33,7 +33,7 @@
 /****************************************************************************/
 // This macro determines that nuber of services that are *actually* used in
 // a particular application. It will vary in value from 1 to MAX_NUM_SERVICES
-#define NUM_SERVICES 9
+#define NUM_SERVICES 10
 
 /****************************************************************************/
 // These are the definitions for Service 0, the lowest priority service.
@@ -163,11 +163,11 @@
 // These are the definitions for Service 9
 #if NUM_SERVICES > 9
 // the header file with the public function prototypes
-#define SERV_9_HEADER "Joint2ServoService.h"
+#define SERV_9_HEADER "ServoService.h"
 // the name of the Init function
-#define SERV_9_INIT InitJoint2ServoService
+#define SERV_9_INIT InitServoService
 // the name of the run function
-#define SERV_9_RUN RunJoint2ServoService
+#define SERV_9_RUN RunServoService
 // How big should this services Queue be?
 #define SERV_9_QUEUE_SIZE 3
 #endif
@@ -306,7 +306,10 @@ typedef enum
   ES_SEND_DATA,
   //events defined by Cyrus
   ES_GAME_START_BUTTON_PRESSED,
-
+  ES_SERVO_IND_RESET,
+  ES_BEACON_DETECTED,
+  //events defned by Li
+    ES_NEW_MOTOR_CMD,
 } ES_EventType_t;
 
 /****************************************************************************/
@@ -363,7 +366,7 @@ typedef enum
 #define TIMER10_RESP_FUNC PostGameLogicFSM
 #define TIMER11_RESP_FUNC TIMER_UNUSED
 #define TIMER12_RESP_FUNC PostStepperService
-#define TIMER13_RESP_FUNC PostBeaconIndicatorService
+#define TIMER13_RESP_FUNC TIMER_UNUSED
 #define TIMER14_RESP_FUNC PostSPIMasterService
 #define TIMER15_RESP_FUNC PostTestHarnessService0
 
@@ -375,12 +378,11 @@ typedef enum
 // These symbolic names should be changed to be relevant to your application
 
 #define SERVICE0_TIMER 15
-#define BEACON_ALIGN_TIMER 13
 #define SPI_QUERY_TIMER 14
 #define Stepper_TIMER 12
 #define JOINT1_SERVO_TIMER 8
 #define JOINT2_SERVO_TIMER 7
-#define ActionAllowedTime_TIMER 9
+#define GameTotalTime_TIMER 9
 #define IdleSetup_TIMER 10
 
 #endif /* ES_CONFIGURE_H */

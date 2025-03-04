@@ -125,6 +125,7 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
    *******************************************/
   if (ThisEvent.EventType == ES_NEW_KEY)
   {
+    DB_printf("Key Pressed: %c\r\n", ThisEvent.EventParam);
     ES_Event_t Event2Post;
     switch (ThisEvent.EventParam)
     {
@@ -208,10 +209,14 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
         /* code */
         break;
     case '0':
-
+        Event2Post.EventType = ES_STEPPER_FWD;
+        Event2Post.EventParam = 100;
+        PostStepperService(Event2Post);
         break;
     case '1':
-
+        Event2Post.EventType = ES_STEPPER_BWD;
+        Event2Post.EventParam = 100;
+        PostStepperService(Event2Post);
         break;
     case '2':
 

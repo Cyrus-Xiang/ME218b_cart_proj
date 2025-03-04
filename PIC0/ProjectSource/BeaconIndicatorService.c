@@ -110,25 +110,8 @@ ES_Event_t RunBeaconIndicatorService(ES_Event_t ThisEvent) {
     switch (ThisEvent.EventType) {
         case ES_REQUEST_SIDE_DETECTION:
             DB_printf("\r Receive Side detection request: Start Aligning\r\n");
-
-            // Start rotating CCW
-            // LATBbits.LATB2 = 1;
-            // LATBbits.LATB9 = 0;
-
-            // OC1RS = (PR2 + 1) * (100 - dutyCycle) / 100;
-            // OC3RS = (PR2 + 1) * dutyCycle / 100;
-
             ES_Timer_InitTimer(BEACON_ALIGN_TIMER, ALIGNMENT_TIMEOUT);
             break;
-
-        // case ES_STOP:
-        //     DB_printf("\rMotor: Stop\r\n");
-        //     // LATBbits.LATB2 = 0;
-        //     // LATBbits.LATB9 = 0;
-        //     // OC1RS = 0;
-        //     // OC3RS = 0;
-        //     break;
-
         case ES_TIMEOUT:
             if (ThisEvent.EventParam == BEACON_ALIGN_TIMER) {
                 if (aligned){
@@ -141,10 +124,6 @@ ES_Event_t RunBeaconIndicatorService(ES_Event_t ThisEvent) {
                   ES_Event_t Event2Post = {ES_SIDE_DETECTED, BEACON_UNKNOWN};
                   PostGameLogicFSM(Event2Post);
                 }
-//                ES_Event_t Event2Post = {aligned ? ES_ALIGN_SUCCESS : ES_ALIGN_FAIL, 0};
-//                PostRobotFSM(Event2Post);
-
-
             }
             break;
 

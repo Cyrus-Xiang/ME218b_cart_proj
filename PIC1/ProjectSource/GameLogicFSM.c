@@ -279,6 +279,11 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
 
     }
     break;
+    case PickingUpCrate_Game_s:
+    {
+
+    }
+    break;
     default:
     break;
   }                                   // end switch on Current State

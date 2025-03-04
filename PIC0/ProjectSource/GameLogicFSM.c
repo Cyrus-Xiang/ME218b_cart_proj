@@ -36,14 +36,14 @@
 /* prototypes for private functions for this machine.They should be functions
    relevant to the behavior of this state machine
 */
-
+static void exitGame(void);
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well.
 // type of state variable should match htat of enum in header file
 #define ActionTimeAllowed 2000
 #define IdleTimeAtSetup 1000
-
-
+#define InGameLED_LAT LATBbits.LATB3
+#define GameTotalAllowedTime 3000
 static GameLogicState_t CurrentState;
 
 // with the introduction of Gen2, we need a module level Priority var as well
@@ -84,8 +84,7 @@ bool InitGameLogicFSM(uint8_t Priority)
   ANSELBbits.ANSB3 = 0; //digital
   LATBbits.LATB3 = 0;//initialize the led indicator as off
   // put us into the Initial PseudoState
-  CurrentState = Setup_Game_s;
-  ES_Timer_InitTimer(IdleSetup_TIMER, IdleTimeAtSetup);
+  CurrentState = P_Init_Game_s;
   // post the initial transition event
   ThisEvent.EventType = ES_INIT;
   if (ES_PostToService(MyPriority, ThisEvent) == true)
@@ -141,52 +140,42 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
 {
   ES_Event_t ReturnEvent;
   ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
-
+  //the following runs no matter what state the game is in
+  if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == GameTotalTime_TIMER)
+  {
+    exitGame();
+  }
+  
   switch (CurrentState)
   {
     case P_Init_Game_s:        // If current state is initial Psedudo State
     {
-      if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == IdleSetup_TIMER)
+      if (ThisEvent.EventType == ES_GAME_START_BUTTON_PRESSED)
       {
-        CurrentState = Setup_Game_s;
-        ES_Timer_InitTimer(ActionAllowedTime_TIMER, ActionTimeAllowed);
-        //PostMotorService();
-        DB_printf("GameLogicFSM: Transition to Setup_Game_s\n");
+        InGameLED_LAT = 1;
+        ES_Timer_InitTimer(GameTotalTime_TIMER,GameTotalAllowedTime);
+        CurrentState = Wait4PIC1_Game_s;
       }
       
     }
-    case Setup_Game_s:        // If current state is initial Psedudo State
-    {
+    break;
+    case Wait4PIC1_Game_s:{
       switch (ThisEvent.EventType)
       {
-        case ES_TIMEOUT:
+        case ES_SIDE_DETECTED:
         {
-          if (ThisEvent.EventParam == IdleSetup_TIMER)
-          {
-            
-          }
+          ES_Event_t Event2Post;
+          Event2Post.EventType = ES_SIDE_DETECTED;
+          Event2Post.EventParam = ThisEvent.EventParam;
+          PostServoService(Event2Post);
+          DB_printf("GameFSM posted side indication request to servo side indicator service \n");
+          //disable the beacon detection interrupt to save CPU resources
+          IC1CONbits.ON = 0;
         }
         break;
+        default:
+        break;
       }
-    }
-    case FindTape_Game_s:        // If current state is state one
-    {
-
-    }
-    break;
-    case GoToStackB_Game_s:
-    {
-
-    }
-    break;
-    case AligningToStack_Game_s:
-    {
-
-    }
-    break;
-    case GoingToStack_Game_s:
-    {
-
     }
     break;
     case UnloadingCrate_Game_s:
@@ -225,4 +214,7 @@ GameLogicState_t QueryGameLogicFSM(void)
 /***************************************************************************
  private functions
  ***************************************************************************/
-
+static void exitGame(void){
+  InGameLED_LAT = 0;
+  return;
+}

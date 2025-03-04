@@ -17,7 +17,7 @@
 typedef enum
 {
   P_Init_Game_s,Setup_Game_s, FindTape_Game_s,AligningToLine_Game_s, GoToInterB_Game_s,
-  AligningToStack_Game_s, GoingToStack_Game_s, UnloadingCrate_Game_s
+  AligningToStack_Game_s, GoingToStack_Game_s, UnloadingCrate_Game_s, PickingUpCrate_Game_s,
 }GameLogicState_t;
 
 // Public Function Prototypes

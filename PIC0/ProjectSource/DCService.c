@@ -7,29 +7,23 @@
 
 /*----------------------------- Module Defines ----------------------------*/
 #define ONE_SEC 1000 // 1000 ms
-static uint16_t steps_per_second = 400;
 static uint16_t interval = 5;
 
 /*---------------------------- Module Variables ---------------------------*/
 static uint8_t MyPriority;
-static uint16_t currentADC; 
 uint16_t currentDutyCycle = 90; 
 static bool forward = true;    // Default duty cycle (50%)
-static uint16_t max_steps = 1000;
-static uint16_t currentStep = 0;
-static uint16_t TotalStep = 0;
-//static bool MotorDirection = 1;
 #define MotorDirection1 PORTAbits.RA2
 #define MotorDirection2 PORTAbits.RA3
-typedef enum{
-    CW = 0,
-    CCW
-}MotorDirection_t;
+// typedef enum{
+//     CW = 0,
+//     CCW
+// }MotorDirection_t;
 static MotorDirection_t Direction;
 #define DC_1 LATAbits.LATA1
 #define DC_2 LATAbits.LATA2
 //#define DIR_VAL PORTAbits.RA3
-#define DIR_VAL 0
+#define DIR_VAL 1
 
 
 #define PWM_freq  10000 //wheel motor PWM frquency in Hz

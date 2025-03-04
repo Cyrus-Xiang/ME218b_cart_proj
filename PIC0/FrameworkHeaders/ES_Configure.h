@@ -303,7 +303,9 @@ typedef enum
   ES_ROTATE_180,
   ES_NAVIGATOR_STATUS_CHANGE,
   ES_NAVIGATOR_HEALTH_CHECK,
-  ES_SEND_DATA
+  ES_SEND_DATA,
+          
+  ES_NEW_MOTOR_CMD,
   //new events
 
 } ES_EventType_t;

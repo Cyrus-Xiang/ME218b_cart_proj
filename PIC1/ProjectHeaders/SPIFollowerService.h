@@ -6,6 +6,8 @@
 
 #define SPI_TIMEOUT_MS 500
 
+#define MOTOR_MOVE_FORWARDS 0xA3
+
 
 #define SPI_TIMEOUT_MS 500
 

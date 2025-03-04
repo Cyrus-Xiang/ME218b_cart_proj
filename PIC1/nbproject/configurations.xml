@@ -94,7 +94,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>snap</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>4.30</languageToolchainVersion>
+        <languageToolchainVersion>4.45</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -260,7 +260,7 @@
         <C32Global>
         </C32Global>
       </item>
-      <item path="ProjectHeaders/SPIFollowerService.h" ex="true" overriding="false">
+      <item path="ProjectHeaders/SPIFollowerService.h" ex="false" overriding="false">
         <C32>
         </C32>
         <C32-AR>

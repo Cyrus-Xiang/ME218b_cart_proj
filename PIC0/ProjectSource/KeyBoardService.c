@@ -24,6 +24,7 @@
 #include "ES_Framework.h"
 #include "KeyboardService.h"
 #include "dbprintf.h"
+#include "SPIMasterService.h"
 
 
 /*----------------------------- Module Defines ----------------------------*/
@@ -144,10 +145,13 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
 
         break;
     case 'f':
-        /* code */
+        
         break;
     case 'g':
-        /* code */
+        Event2Post.EventType = ES_NEW_MOTOR_CMD;
+        Event2Post.EventParam = MOTOR_MOVE_FORWARDS;
+        PostSPIMasterService(Event2Post);
+        DB_printf("ES_MOTOR_MOVE_FORWARD posted to MasterService\r\n");
         break;
     case 'h':
         /* code */

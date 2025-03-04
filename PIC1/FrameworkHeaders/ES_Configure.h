@@ -304,6 +304,7 @@ typedef enum
   ES_BEACON_FOUND,
   //for spi stuff
   ES_DATA_RECEIVED,
+  ES_NEW_PIC0_CMD,
   
 } ES_EventType_t;
 

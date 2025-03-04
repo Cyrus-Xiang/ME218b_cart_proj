@@ -145,6 +145,9 @@ ES_Event_t RunSPIMasterService(ES_Event_t ThisEvent)
         if (ThisEvent.EventType == ES_NEW_NAV_CMD && ThisEvent.EventParam != 0) {
             SendSPICommand(ThisEvent.EventParam);
             DB_printf("We are Sending SPI param command ...\r\n");
+        }else if (ThisEvent.EventType == ES_NEW_MOTOR_CMD){
+            SendSPICommand(ThisEvent.EventParam);
+            DB_printf("We are Sending motor command from SPI Master...\r\n");           
         }
     }
 

@@ -307,7 +307,7 @@ typedef enum
   //events defined by Cyrus
   ES_GAME_START_BUTTON_PRESSED,
   ES_SERVO_IND_RESET,
-  ES_BEACON_DETECTED,
+  ES_BEACON_FOUND,//has to be sent to PIC1
   ES_SPI_PIC1_UNLOADING_CUBE_S,//as a result of query status of PIC1
   ES_SELF_TRANSITION, //dummy event for triggering the enter state function
   //events defned by Li

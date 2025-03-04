@@ -302,6 +302,7 @@ typedef enum
 
   //for testing on PIC1 only
   ES_BEACON_FOUND,
+  ES_GAME_START_BUTTON_PRESSED,
   //for spi stuff
   ES_DATA_RECEIVED,
   ES_NEW_PIC0_CMD,

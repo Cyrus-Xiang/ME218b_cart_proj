@@ -175,7 +175,7 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
           DB_printf("GameFSM posted side indication request to servo side indicator service \n");
           //disable the beacon detection interrupt to save CPU resources
           //IC1CONbits.ON = 0;
-          ES_Event_t Event2Post = {ES_BEACON_DETECTED, 0};
+          ES_Event_t Event2Post = {ES_BEACON_FOUND, 0};
           PostSPIMasterService(Event2Post); // tell PIC1 beacon has been detected
         }
         break;

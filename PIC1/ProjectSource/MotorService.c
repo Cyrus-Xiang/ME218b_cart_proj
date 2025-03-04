@@ -80,6 +80,7 @@ bool InitMotorService(uint8_t Priority)
    in here you write your initialization code
    *******************************************/
     // TRIS and LAT for direction control pins
+  //TRISBbits.TRISB5 = 0; // Outputs
   H_bridge1A_TRIS = 0; // Outputs
   H_bridge1A_LAT = 0;
   H_bridge3A_TRIS = 0; // Outputs
@@ -222,6 +223,8 @@ static void ConfigTimer2()
   IFS0CLR = _IFS0_T2IF_MASK;
   // Disable interrupts on Timer 2
   IEC0CLR = _IEC0_T2IE_MASK;
+  //turn on the timer again
+  T2CONbits.ON = 1;
   return;
 }
 static void ConfigPWM_OC4() 

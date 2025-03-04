@@ -122,7 +122,6 @@ bool InitTapeFSM(uint8_t Priority)
 
   ConfigureReflectSensor(); // this calls the ADC library
   ConfigureIntersectionSensor();//configures the 2 intersection IR sensors
-  T2CONbits.ON = 1;
   ConfigTimer4();
   // We do not yet turn on T4 because the initial state is Idle state
   // T4CONbits.ON = 1;

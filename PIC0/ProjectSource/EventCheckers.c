@@ -125,6 +125,7 @@ bool Check4GameStartButton(void){
     ES_Event_t ThisEvent;
     ThisEvent.EventType = ES_GAME_START_BUTTON_PRESSED;
     PostGameLogicFSM(ThisEvent);
+    LATBbits.LATB3 = 1;
     DB_printf("event checker: game start button pressed \n");
     return true;
   }

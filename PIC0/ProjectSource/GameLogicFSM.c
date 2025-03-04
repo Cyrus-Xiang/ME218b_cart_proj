@@ -82,6 +82,7 @@ bool InitGameLogicFSM(uint8_t Priority)
   //for LED in game progress indicator
   TRISBbits.TRISB3 = 0; //output
   ANSELBbits.ANSB3 = 0; //digital
+  LATBbits.LATB3 = 0;//initialize the led indicator as off
   // put us into the Initial PseudoState
   CurrentState = Setup_Game_s;
   ES_Timer_InitTimer(IdleSetup_TIMER, IdleTimeAtSetup);

@@ -38,6 +38,7 @@
    relevant to the behavior of this state machine
 */
 static void exitGame(void);
+static void enter_UnloadingCrate(void);
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well.
 // type of state variable should match htat of enum in header file
@@ -45,6 +46,7 @@ static void exitGame(void);
 #define IdleTimeAtSetup 1000
 #define InGameLED_LAT LATBbits.LATB3
 #define GameTotalAllowedTime 10000
+#define LinearStageSteps_unload 300 //we assume that it takes 300 steps to unload a crate
 static GameLogicState_t CurrentState;
 
 // with the introduction of Gen2, we need a module level Priority var as well
@@ -177,7 +179,12 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
           PostSPIMasterService(Event2Post); // tell PIC1 beacon has been detected
         }
         break;
-        
+        case ES_SPI_PIC1_UNLOADING_CUBE_S:
+          CurrentState = UnloadingCrate_Game_s;
+          DB_printf("transition from Wait4PIC1_Game_s to UnloadingCrate_Game_s\n");
+          ES_Event_t Event2Post = {ES_SELF_TRANSITION, 0};
+          PostGameLogicFSM(Event2Post);
+        break;
         default:
         break;
       }
@@ -185,7 +192,16 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
     break;
     case UnloadingCrate_Game_s:
     {
-
+      if (ThisEvent.EventType == ES_SELF_TRANSITION)
+      {
+        enter_UnloadingCrate();
+      }else if (ThisEvent.EventType == ES_STEPPER_COMPLETE)
+      {
+        //CurrentState = Wait4PIC1_Game_s;
+        DB_printf("stepper complete\n");
+        DB_printf("transition from UnloadingCrate_Game_s to Wait4PIC1_Game_s\n");
+        
+      } 
     }
     break;
     default:
@@ -224,5 +240,11 @@ static void exitGame(void){
   ES_Event_t Event2Post;
   Event2Post.EventType = ES_SERVO_IND_RESET;
   PostServoService(Event2Post);
+  return;
+}
+
+static void enter_UnloadingCrate(void){
+  ES_Event_t Event2Post = {ES_STEPPER_BWD, LinearStageSteps_unload};
+  PostStepperService(Event2Post);
   return;
 }

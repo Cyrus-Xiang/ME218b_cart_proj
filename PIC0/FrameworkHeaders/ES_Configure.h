@@ -308,6 +308,8 @@ typedef enum
   ES_GAME_START_BUTTON_PRESSED,
   ES_SERVO_IND_RESET,
   ES_BEACON_DETECTED,
+  ES_SPI_PIC1_UNLOADING_CUBE_S,//as a result of query status of PIC1
+  ES_SELF_TRANSITION, //dummy event for triggering the enter state function
   //events defned by Li
     ES_NEW_MOTOR_CMD,
 } ES_EventType_t;

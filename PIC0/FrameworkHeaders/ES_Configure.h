@@ -33,7 +33,7 @@
 /****************************************************************************/
 // This macro determines that nuber of services that are *actually* used in
 // a particular application. It will vary in value from 1 to MAX_NUM_SERVICES
-#define NUM_SERVICES 8
+#define NUM_SERVICES 9
 
 /****************************************************************************/
 // These are the definitions for Service 0, the lowest priority service.
@@ -150,11 +150,11 @@
 // These are the definitions for Service 8
 #if NUM_SERVICES > 8
 // the header file with the public function prototypes
-#define SERV_8_HEADER "Joint1ServoService.h"
+#define SERV_8_HEADER "BeaconIndicatorService.h"
 // the name of the Init function
-#define SERV_8_INIT InitJoint1ServoService
+#define SERV_8_INIT InitBeaconIndicatorService
 // the name of the run function
-#define SERV_8_RUN RunJoint1ServoService
+#define SERV_8_RUN RunBeaconIndicatorService
 // How big should this services Queue be?
 #define SERV_8_QUEUE_SIZE 3
 #endif
@@ -362,7 +362,7 @@ typedef enum
 #define TIMER10_RESP_FUNC PostGameLogicFSM
 #define TIMER11_RESP_FUNC TIMER_UNUSED
 #define TIMER12_RESP_FUNC PostStepperService
-#define TIMER13_RESP_FUNC TIMER_UNUSED
+#define TIMER13_RESP_FUNC PostBeaconIndicatorService
 #define TIMER14_RESP_FUNC PostSPIMasterService
 #define TIMER15_RESP_FUNC PostTestHarnessService0
 

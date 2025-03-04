@@ -42,7 +42,7 @@
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well.
 // type of state variable should match htat of enum in header file
-#define ActionTimeAllowed 2000
+#define HitWallDetectTime 2000 //after this amount of time, if nothing happens we say that we have hit the wall
 #define IdleTimeAtSetup 3000
 #define RotateGuranteeTime 1000 //for the time between we send out rotate command and find tape command in aligning to stack state
 #define TapeFollowGuranteeTime 2000 //time that is guranteed for tape following to be executed 
@@ -81,7 +81,7 @@ bool InitGameLogicFSM(uint8_t Priority)
   // put us into the Initial PseudoState
   CurrentState = P_Init_Game_s;
   //ES_Timer_InitTimer(IdleSetup_TIMER, IdleTimeAtSetup);
-  //ES_Timer_InitTimer(GameLogicTest_TIMER,IdleTimeAtSetup+800);
+  ES_Timer_InitTimer(GameLogicTest_TIMER,IdleTimeAtSetup+800);
   // post the initial transition event
   ThisEvent.EventType = ES_INIT;
   if (ES_PostToService(MyPriority, ThisEvent) == true)
@@ -140,6 +140,8 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
   if (ThisEvent.EventParam == GameLogicTest_TIMER)
   {
     ES_Event_t Event2Post;
+    Event2Post.EventType = ES_GAME_START_BUTTON_PRESSED;
+    PostGameLogicFSM(Event2Post);
     Event2Post.EventType = ES_BEACON_FOUND;
     PostGameLogicFSM(Event2Post);
   }
@@ -148,18 +150,19 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
   {
     case P_Init_Game_s:        // If current state is initial Psedudo State
     {
-      if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == IdleSetup_TIMER)
-      {
+      // if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == IdleSetup_TIMER)
+        if (ThisEvent.EventType == ES_GAME_START_BUTTON_PRESSED)
+        {
         CurrentState = Setup_Game_s;
         DB_printf("GameLogicFSM: Transition to Setup_Game_s\n");
-        ES_Timer_InitTimer(ActionAllowedTime_TIMER, ActionTimeAllowed);
+        ES_Timer_InitTimer(ActionAllowedTime_TIMER, HitWallDetectTime);
         ES_Event_t Event2Post;
         Event2Post.EventType = ES_MOTOR_CW_CONTINUOUS;
         Event2Post.EventParam = rotate_speed;
         PostMotorService(Event2Post);
         DB_printf("motor service posted, turning cw\n");
-        ES_Timer_InitTimer(ActionAllowedTime_TIMER, ActionTimeAllowed);
-        DB_printf("action allowed timer started with %d ms\n", ActionTimeAllowed);
+        ES_Timer_InitTimer(ActionAllowedTime_TIMER, HitWallDetectTime);
+        DB_printf("action allowed timer started with %d ms\n", HitWallDetectTime);
       }
       
     }
@@ -176,7 +179,7 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
       {
         CurrentState = FindTape_Game_s;
         ES_Timer_StopTimer(ActionAllowedTime_TIMER);
-        DB_printf("GameLogicFSM: Transition to FindTape_Game_s\n");
+        DB_printf("Transition from Setup_Game_s to FindTape_Game_s\n");
         ES_Event_t Event2Post;
         Event2Post.EventType = ES_TAPE_LookForTape;
         PostTapeFSM(Event2Post);
@@ -185,6 +188,8 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
         Event2Post.EventParam = rotate_speed;
         PostMotorService(Event2Post);
         DB_printf("motor service posted, turning cw\n");
+        //start the timer again for detecting hitting the wall and this time we look for tape instead of beacon
+        ES_Timer_InitTimer(ActionAllowedTime_TIMER, HitWallDetectTime);
       }
     }
     break;
@@ -205,7 +210,13 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
         PostTapeFSM(Event2Post);
         DB_printf("tape service posted, following tape in reverse\n");
         ES_Timer_InitTimer(ActionAllowedTime_TIMER, TapeFollowGuranteeTime);
+      }else if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == ActionAllowedTime_TIMER)
+      {
+        ES_Event_t Event2Post = {ES_MOTOR_CCW_CONTINUOUS, rotate_speed};
+        PostMotorService(Event2Post);
+        DB_printf("hit the wall detected, motor service posted, turning ccw\n");
       }
+      
       
     }
     break;
@@ -271,7 +282,13 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
     break;
     case GoingToStack_Game_s:
     {
-
+      if (ThisEvent.EventType == ES_TAPE_FAIL)
+      {
+        DB_printf("taking a baby step\n");
+        ES_Event_t Event2Post = {ES_MOTOR_BABY_STEP, 0};
+        PostMotorService(Event2Post);
+      }
+      
     }
     break;
     case UnloadingCrate_Game_s:

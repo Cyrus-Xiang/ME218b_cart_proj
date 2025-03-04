@@ -157,6 +157,13 @@ ES_Event_t RunMotorService(ES_Event_t ThisEvent)
   case ES_MOTOR_STOP:
     StopMotor();
     break;
+  case ES_MOTOR_BABY_STEP:
+    H_bridge1A_LAT = 1;
+    H_bridge3A_LAT = 1;
+    OC4RS = (float)PR2 * 50 /100;
+    OC3RS = (float)PR2 * 60 /100;
+    ES_Timer_InitTimer(Motor_Turning_TIMER, 500);
+    break;
   case ES_MOTOR_FWD:
     H_bridge1A_LAT = 0;
     H_bridge3A_LAT = 0;

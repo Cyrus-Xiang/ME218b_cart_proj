@@ -120,7 +120,7 @@ bool Check4Keystroke(void)
 }
 
 bool Check4GameStartButton(void){
-  if (PORTBbis.RB2 == 1)
+  if (PORTBbits.RB2 == 1)
   {
     ES_Event_t ThisEvent;
     ThisEvent.EventType = ES_GAME_START_BUTTON_PRESSED;

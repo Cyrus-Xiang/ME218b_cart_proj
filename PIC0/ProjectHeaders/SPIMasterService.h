@@ -8,6 +8,11 @@
 #include "ES_Events.h"
 #include "ES_Port.h"
 
+
+#define STATE_START_BUTTON_PRESSED 0xBB
+#define STATE_BEACON_FOUND 0xCC
+
+
 #define SPI_TIMEOUT_MS 500
 
 #define NAV_CMD_MOVE_FORWARD 0x10

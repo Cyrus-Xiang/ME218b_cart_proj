@@ -20,7 +20,7 @@ build/default/debug/FrameworkSource/ES_Timers.o: \
  ProjectHeaders/SimpleHSM.h ProjectHeaders/SPIMasterService.h \
  ProjectHeaders/StepperService.h ProjectHeaders/Joint1ServoService.h \
  ProjectHeaders/Joint2ServoService.h \
- ProjectHeaders/BeaconIndicatorService.h \
+ ProjectHeaders/BeaconIndicatorService.h ProjectHeaders/ServoService.h \
  FrameworkSource/../FrameworkHeaders/ES_General.h \
  FrameworkSource/../FrameworkHeaders/ES_Events.h \
  FrameworkSource/../FrameworkHeaders/ES_PostList.h \
@@ -81,6 +81,8 @@ ProjectHeaders/Joint1ServoService.h:
 ProjectHeaders/Joint2ServoService.h:
 
 ProjectHeaders/BeaconIndicatorService.h:
+
+ProjectHeaders/ServoService.h:
 
 FrameworkSource/../FrameworkHeaders/ES_General.h:
 

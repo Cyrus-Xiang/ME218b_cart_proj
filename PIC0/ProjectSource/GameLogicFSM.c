@@ -31,6 +31,7 @@
 #include "terminal.h"
 #include "ServoService.h"
 #include "BeaconIndicatorService.h"
+#include "SPIMasterService.h"
 /*----------------------------- Module Defines ----------------------------*/
 
 /*---------------------------- Module Functions ---------------------------*/
@@ -159,7 +160,7 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
         ES_Timer_InitTimer(GameTotalTime_TIMER,GameTotalAllowedTime);
         CurrentState = Wait4PIC1_Game_s;
         DB_printf("transition from P_init_game_s to Wait4PIC1_Game_s\n");
-        ES_Event_t Event2Post = {ES_GAME_START_BUTTON_PRESSED, 0};
+        ES_Event_t Event2Post = {ES_GAME_START_BUTTON_PRESSED, STATE_START_BUTTON_PRESSED};
         PostSPIMasterService(Event2Post); // tell PIC1 that game has started
 
       }
@@ -175,7 +176,7 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
           DB_printf("GameFSM posted side indication request to servo side indicator service \n");
           //disable the beacon detection interrupt to save CPU resources
           //IC1CONbits.ON = 0;
-          ES_Event_t Event2Post = {ES_BEACON_FOUND, 0};
+          ES_Event_t Event2Post = {ES_BEACON_FOUND, STATE_BEACON_FOUND};
           PostSPIMasterService(Event2Post); // tell PIC1 beacon has been detected
         }
         break;

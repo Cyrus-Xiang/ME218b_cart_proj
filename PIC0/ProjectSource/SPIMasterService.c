@@ -148,6 +148,12 @@ ES_Event_t RunSPIMasterService(ES_Event_t ThisEvent)
         }else if (ThisEvent.EventType == ES_NEW_MOTOR_CMD){
             SendSPICommand(ThisEvent.EventParam);
             DB_printf("We are Sending motor command from SPI Master...\r\n");           
+        }else if (ThisEvent.EventType == ES_GAME_START_BUTTON_PRESSED){
+            SendSPICommand(ThisEvent.EventParam);
+            DB_printf("We are Sending ES_GAME_START_BUTTON_PRESSED from SPI Master...\r\n");           
+        }else if (ThisEvent.EventType == ES_BEACON_FOUND){
+            SendSPICommand(ThisEvent.EventParam);
+            DB_printf("We are Sending ES_BEACON_FOUND from SPI Master...\r\n");           
         }
     }
 

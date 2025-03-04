@@ -36,6 +36,10 @@ const char* TranslateNavCmdToStr(uint8_t command) {
             return "NAV_CMD_ALIGN";
         case CMD_MOTOR_MOVE_FORWARDS:
             return "CMD_MOTOR_MOVE_FORWARDS";
+        case STATE_START_BUTTON_PRESSED:
+            return "STATE_START_BUTTON_PRESSED";
+        case STATE_BEACON_FOUND:
+            return "STATE_BEACON_FOUND";
         default:
             DB_printf("Unknown command: %x\r\n", command);
             return "UNKNOWN_COMMAND";
@@ -203,9 +207,16 @@ void __ISR(_SPI_2_VECTOR, IPL6SOFT) SPIFollowerISR(void) {
         ReceivedCmd = receivedByte;
         DB_printf("[SPI] Received nav command: %s\r\n", TranslateNavCmdToStr(ReceivedCmd));
         ES_Event_t CmdEvent;
-        CmdEvent.EventType = ES_NEW_PIC0_CMD;
-        CmdEvent.EventParam = ReceivedCmd;
-        PostDataReceiverService(CmdEvent);
+//        CmdEvent.EventType = ES_NEW_PIC0_CMD;
+//        CmdEvent.EventParam = ReceivedCmd;
+//        PostDataReceiverService(CmdEvent);
+        if (ReceivedCmd == STATE_START_BUTTON_PRESSED){
+            CmdEvent.EventType = ES_GAME_START_BUTTON_PRESSED;
+            PostGameLogicFSM(CmdEvent);
+        }else if (ReceivedCmd == STATE_BEACON_FOUND){
+            CmdEvent.EventType = ES_BEACON_FOUND;
+            PostGameLogicFSM(CmdEvent);
+        }
     } else if (receivedByte == NAV_CMD_QUERY_STATUS) {
         // Update status based on Navigator state
         DB_printf("[SPI] Received status query: %s\r\n", TranslateNavCmdToStr(receivedByte));

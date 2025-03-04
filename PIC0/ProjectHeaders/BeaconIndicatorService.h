@@ -12,10 +12,10 @@ bool InitBeaconIndicatorService(uint8_t Priority);
 bool PostBeaconIndicatorService(ES_Event_t ThisEvent);
 ES_Event_t RunBeaconIndicatorService(ES_Event_t ThisEvent);
 
-void ConfigTimer2(void);
-void ConfigPWM_OC1(void);
-void ConfigPWM_OC3(void);
+// void ConfigTimer2(void);
+// void ConfigPWM_OC1(void);
+// void ConfigPWM_OC3(void);
 void ConfigTimer3(void);
-void Config_IC2(void);
+void Config_IC1(void);
 
 #endif // MOTOR_SERVICE_H

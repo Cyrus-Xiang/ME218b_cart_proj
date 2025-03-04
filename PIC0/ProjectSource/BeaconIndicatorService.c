@@ -70,12 +70,12 @@ bool InitBeaconIndicatorService(uint8_t Priority) {
     puts("\rStarting Beacon Indicator Service\r");
     
     // Set motor control pins as digital outputs
-    TRISBbits.TRISB2 = 0;
-    ANSELBbits.ANSB2 = 0;
-    TRISBbits.TRISB9 = 0;
+    // TRISBbits.TRISB2 = 0;
+    // ANSELBbits.ANSB2 = 0;
+    // TRISBbits.TRISB9 = 0;
 
     // Configure Timer2 & PWM
-    ConfigTimer2();
+    // ConfigTimer2();
     //ConfigPWM_OC1();
     //ConfigPWM_OC3();
 
@@ -112,22 +112,22 @@ ES_Event_t RunBeaconIndicatorService(ES_Event_t ThisEvent) {
             DB_printf("\r Receive Side detection request: Start Aligning\r\n");
 
             // Start rotating CCW
-            LATBbits.LATB2 = 1;
-            LATBbits.LATB9 = 0;
+            // LATBbits.LATB2 = 1;
+            // LATBbits.LATB9 = 0;
 
-            OC1RS = (PR2 + 1) * (100 - dutyCycle) / 100;
-            OC3RS = (PR2 + 1) * dutyCycle / 100;
+            // OC1RS = (PR2 + 1) * (100 - dutyCycle) / 100;
+            // OC3RS = (PR2 + 1) * dutyCycle / 100;
 
             ES_Timer_InitTimer(BEACON_ALIGN_TIMER, ALIGNMENT_TIMEOUT);
             break;
 
-        case ES_STOP:
-            DB_printf("\rMotor: Stop\r\n");
-            LATBbits.LATB2 = 0;
-            LATBbits.LATB9 = 0;
-            OC1RS = 0;
-            OC3RS = 0;
-            break;
+        // case ES_STOP:
+        //     DB_printf("\rMotor: Stop\r\n");
+        //     // LATBbits.LATB2 = 0;
+        //     // LATBbits.LATB9 = 0;
+        //     // OC1RS = 0;
+        //     // OC3RS = 0;
+        //     break;
 
         case ES_TIMEOUT:
             if (ThisEvent.EventParam == BEACON_ALIGN_TIMER) {
@@ -158,37 +158,37 @@ ES_Event_t RunBeaconIndicatorService(ES_Event_t ThisEvent) {
  * Private Functions
  ***************************************************************************/
 
-void ConfigTimer2() {
-    T2CONbits.ON = 0;
-    T2CONbits.TCS = 0;
-    T2CONbits.TCKPS = 0b000;
-    TMR2 = 0;
-    PR2 = PIC_FREQ / (PWM_FREQ * TIMER2_PRESCALE) - 1;
+// void ConfigTimer2() {
+//     T2CONbits.ON = 0;
+//     T2CONbits.TCS = 0;
+//     T2CONbits.TCKPS = 0b000;
+//     TMR2 = 0;
+//     PR2 = PIC_FREQ / (PWM_FREQ * TIMER2_PRESCALE) - 1;
 
-    IFS0CLR = _IFS0_T2IF_MASK;
-    IEC0CLR = _IEC0_T2IE_MASK;
-}
+//     IFS0CLR = _IFS0_T2IF_MASK;
+//     IEC0CLR = _IEC0_T2IE_MASK;
+// }
 
-void ConfigPWM_OC1() {
-    RPB3R = 0b0101;
-    OC1CON = 0;
-    OC1CONbits.OCM = 0b110;
-    OC1CONbits.OCTSEL = 0;
-    OC1RS = 0;
-    OC1R = 0;
-    T2CONbits.ON = 1;
-    OC1CONbits.ON = 1;
-}
+// void ConfigPWM_OC1() {
+//     RPB3R = 0b0101;
+//     OC1CON = 0;
+//     OC1CONbits.OCM = 0b110;
+//     OC1CONbits.OCTSEL = 0;
+//     OC1RS = 0;
+//     OC1R = 0;
+//     T2CONbits.ON = 1;
+//     OC1CONbits.ON = 1;
+// }
 
-void ConfigPWM_OC3() {
-    RPB10R = 0b0101;
-    OC3CON = 0;
-    OC3CONbits.OCM = 0b110;
-    OC3CONbits.OCTSEL = 0;
-    OC3RS = 0;
-    OC3R = 0;
-    OC3CONbits.ON = 1;
-}
+// void ConfigPWM_OC3() {
+//     RPB10R = 0b0101;
+//     OC3CON = 0;
+//     OC3CONbits.OCM = 0b110;
+//     OC3CONbits.OCTSEL = 0;
+//     OC3RS = 0;
+//     OC3R = 0;
+//     OC3CONbits.ON = 1;
+// }
 
 void ConfigTimer3() {
     T3CONbits.ON = 0;
@@ -203,18 +203,18 @@ void ConfigTimer3() {
     T3CONbits.ON = 1;
 }
 
-void Config_IC2() {
-    IC2CONbits.ON = 0;
-    IC2CONbits.C32 = 0;
-    IC2CONbits.ICTMR = 0;
-    IC2CONbits.ICI = 0b00;
-    IC2CONbits.ICM = 0b011;
+// void Config_IC2() {
+//     IC2CONbits.ON = 0;
+//     IC2CONbits.C32 = 0;
+//     IC2CONbits.ICTMR = 0;
+//     IC2CONbits.ICI = 0b00;
+//     IC2CONbits.ICM = 0b011;
 
-    IFS0CLR = _IFS0_IC2IF_MASK;
-    IPC2bits.IC2IP = 7;
-    IEC0SET = _IEC0_IC2IE_MASK;
-    IC2CONbits.ON = 1;
-}
+//     IFS0CLR = _IFS0_IC2IF_MASK;
+//     IPC2bits.IC2IP = 7;
+//     IEC0SET = _IEC0_IC2IE_MASK;
+//     IC2CONbits.ON = 1;
+// }
 void Config_IC1() {
     IC1CONbits.ON = 0;
     IC1CONbits.C32 = 0;
@@ -232,6 +232,7 @@ void Config_IC1() {
  ***************************************************************************/
 
 void __ISR(_INPUT_CAPTURE_1_VECTOR, IPL7SOFT) IC1ISR(void) {
+    //puts("beacon ISR entered\n");
     CapturedTime = IC1BUF;
     IFS0CLR = _IFS0_IC1IF_MASK;
 
@@ -246,7 +247,8 @@ void __ISR(_INPUT_CAPTURE_1_VECTOR, IPL7SOFT) IC1ISR(void) {
 
     float freq = TICK_FREQ / PulsePR;
     //DB_printf("PulsePR is: %d\n", PulsePR);
-    if (PulsePR > 0 && !aligned) {
+    // if (PulsePR > 0 && !aligned) {
+        if (PulsePR > 0 ) {
         detectedFreq = (int)(freq+0.5);
         DB_printf("Detected Frequency: %d\n", freq);
         

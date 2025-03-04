@@ -80,8 +80,8 @@ bool InitGameLogicFSM(uint8_t Priority)
   MyPriority = Priority;
   // put us into the Initial PseudoState
   CurrentState = P_Init_Game_s;
-  ES_Timer_InitTimer(IdleSetup_TIMER, IdleTimeAtSetup);
-  ES_Timer_InitTimer(GameLogicTest_TIMER,IdleTimeAtSetup+800);
+  //ES_Timer_InitTimer(IdleSetup_TIMER, IdleTimeAtSetup);
+  //ES_Timer_InitTimer(GameLogicTest_TIMER,IdleTimeAtSetup+800);
   // post the initial transition event
   ThisEvent.EventType = ES_INIT;
   if (ES_PostToService(MyPriority, ThisEvent) == true)

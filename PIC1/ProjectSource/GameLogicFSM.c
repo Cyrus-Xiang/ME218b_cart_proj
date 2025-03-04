@@ -81,6 +81,7 @@ bool InitGameLogicFSM(uint8_t Priority)
   // put us into the Initial PseudoState
   CurrentState = P_Init_Game_s;
   ES_Timer_InitTimer(IdleSetup_TIMER, IdleTimeAtSetup);
+  ES_Timer_InitTimer(GameLogicTest_TIMER,IdleTimeAtSetup+800);
   // post the initial transition event
   ThisEvent.EventType = ES_INIT;
   if (ES_PostToService(MyPriority, ThisEvent) == true)
@@ -136,7 +137,13 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
 {
   ES_Event_t ReturnEvent;
   ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
-
+  if (ThisEvent.EventParam == GameLogicTest_TIMER)
+  {
+    ES_Event_t Event2Post;
+    Event2Post.EventType = ES_BEACON_FOUND;
+    PostGameLogicFSM(Event2Post);
+  }
+  
   switch (CurrentState)
   {
     case P_Init_Game_s:        // If current state is initial Psedudo State

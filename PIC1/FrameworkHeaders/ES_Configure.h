@@ -359,7 +359,7 @@ typedef enum
 #define TIMER8_RESP_FUNC TIMER_UNUSED
 #define TIMER9_RESP_FUNC PostTapeFSM
 #define TIMER10_RESP_FUNC PostMotorService
-#define TIMER11_RESP_FUNC TIMER_UNUSED
+#define TIMER11_RESP_FUNC PostGameLogicFSM
 #define TIMER12_RESP_FUNC TIMER_UNUSED
 #define TIMER13_RESP_FUNC PostGameLogicFSM
 #define TIMER14_RESP_FUNC PostGameLogicFSM
@@ -375,6 +375,7 @@ typedef enum
 // #define NAV_STATE_DEBUG_TIMER 14
 #define TapeTest_TIMER 9
 #define Motor_Turning_TIMER 10
+#define GameLogicTest_TIMER 11
 #define RotateEnsure_TIMER 0
 #define IdleSetup_TIMER 13
 #define ActionAllowedTime_TIMER 14

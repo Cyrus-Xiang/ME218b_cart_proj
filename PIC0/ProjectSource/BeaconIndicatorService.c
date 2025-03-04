@@ -135,11 +135,11 @@ ES_Event_t RunBeaconIndicatorService(ES_Event_t ThisEvent) {
                     DB_printf("Aligned succeed,R\n");
                     DB_printf("Detected Frequency: %d\n", detectedFreq);
                     ES_Event_t Event2Post = {ES_SIDE_DETECTED, DetectedBeacon};
-                    PostPlannerHSM(Event2Post);
+                    PostGameLogicFSM(Event2Post);
                 }else{
                   DB_printf("Aligned failed, stopping motor.. R\n"); 
                   ES_Event_t Event2Post = {ES_SIDE_DETECTED, BEACON_UNKNOWN};
-                  PostPlannerHSM(Event2Post);
+                  PostGameLogicFSM(Event2Post);
                 }
 //                ES_Event_t Event2Post = {aligned ? ES_ALIGN_SUCCESS : ES_ALIGN_FAIL, 0};
 //                PostRobotFSM(Event2Post);
@@ -255,25 +255,25 @@ void __ISR(_INPUT_CAPTURE_1_VECTOR, IPL7SOFT) IC1ISR(void) {
             DetectedBeacon = BEACON_G;
             aligned = true;
             ES_Event_t Event2Post = {ES_SIDE_DETECTED, DetectedBeacon};
-            PostPlannerHSM(Event2Post);
+            PostGameLogicFSM(Event2Post);
         } else if (abs(detectedFreq - FREQ_B) <= FreqTolerance) {
             DB_printf("Aligned with BEACON B\n");
             DetectedBeacon = BEACON_B;
             aligned = true;
             ES_Event_t Event2Post = {ES_SIDE_DETECTED, DetectedBeacon};
-            PostPlannerHSM(Event2Post);
+            PostGameLogicFSM(Event2Post);
         } else if (abs(detectedFreq - FREQ_R) <= FreqTolerance) {
             DB_printf("Aligned with BEACON R\n");
             DetectedBeacon = BEACON_R;
             aligned = true;
             ES_Event_t Event2Post = {ES_SIDE_DETECTED, DetectedBeacon};
-            PostPlannerHSM(Event2Post);
+            PostGameLogicFSM(Event2Post);
         } else if (abs(detectedFreq - FREQ_L) <= FreqTolerance) {
             DB_printf("Aligned with BEACON L\n");
             DetectedBeacon = BEACON_L;
             aligned = true;
             ES_Event_t Event2Post = {ES_SIDE_DETECTED, DetectedBeacon};
-            PostPlannerHSM(Event2Post);
+            PostGameLogicFSM(Event2Post);
         }
     }
 

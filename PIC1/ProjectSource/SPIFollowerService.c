@@ -3,8 +3,8 @@
 #include "ES_Configure.h"
 #include "ES_Framework.h"
 #include "SPIFollowerService.h"
-#include "NavigatorHSM.h"
 #include "dbprintf.h"
+#include "DataReceiverService.h"
 
 /*---------------------------- Module Variables ---------------------------*/
 static uint8_t MyPriority;
@@ -82,6 +82,8 @@ const char* TranslateNavStatusToStr(uint8_t status) {
             return "NAV_STATUS_LINE_DISCOVER";
         case NAV_STATUS_CHECK_CRATE:
             return "NAV_STATUS_CHECK_CRATE";
+        case NAV_STATUS_TAPE_ALIGNED:
+            return "NAV_STATUS_TAPE_ALIGNED";
         default:
             return "UNKNOWN_STATUS";
     }
@@ -119,9 +121,9 @@ ES_Event_t RunSPIFollowerService(ES_Event_t ThisEvent)
     if (ThisEvent.EventType == ES_NEW_NAV_STATUS) {
         CurrentNavStatus = ThisEvent.EventParam;
         if (ThisEvent.EventParam >= NAV_CMD_MOVE_FORWARD && ThisEvent.EventParam <= NAV_CMD_ALIGN + 1) {
-            DB_printf("[SPI] SPIFollowerService complet: %s\r\n", TranslateNavCmdToStr(ThisEvent.EventParam - 1));
+            DB_printf("[SPI] complete: %s\r\n", TranslateNavCmdToStr(ThisEvent.EventParam - 1));
         } else {
-            DB_printf("[SPI] SPIFollowerService received new nav status: %s\r\n", CurrentNavStatus);
+            DB_printf("[SPI] received new nav status: %s\r\n", CurrentNavStatus);
         }
     }
 
@@ -191,7 +193,7 @@ void __ISR(_SPI_2_VECTOR, IPL6SOFT) SPIFollowerISR(void) {
     uint8_t receivedByte = SPI2BUF;
     IFS1CLR = _IFS1_SPI2RXIF_MASK; // Clear the interrupt flag
 
-    //DB_printf("[SPI] Received byte: %d\r\n", receivedByte); // Add debug print
+    DB_printf("[SPI] Received byte: %d\r\n", receivedByte); // Add debug print
 
     // Process command directly
     if(receivedByte >= NAV_CMD_MOVE_FORWARD && receivedByte <= NAV_CMD_ALIGN) {
@@ -200,11 +202,17 @@ void __ISR(_SPI_2_VECTOR, IPL6SOFT) SPIFollowerISR(void) {
         ES_Event_t CmdEvent;
         CmdEvent.EventType = ES_NEW_NAV_CMD;
         CmdEvent.EventParam = ReceivedCmd;
-        PostNavigatorHSM(CmdEvent);
+        PostDataReceiverService(CmdEvent);
     } else if (receivedByte == NAV_CMD_QUERY_STATUS) {
         // Update status based on Navigator state
-        DB_printf("Received status query\r\n");
-        NavigatorState_t currentState = QueryNavigatorHSM();
+        DB_printf("[SPI] Received status query: %s\r\n", TranslateNavCmdToStr(receivedByte));
+        ///new added code for debugging
+        ES_Event_t CmdEvent;
+        CmdEvent.EventType = ES_DATA_RECEIVED;
+        CmdEvent.EventParam = ReceivedCmd;
+        PostDataReceiverService(CmdEvent);
+        // new added code for debugging
+        NavigatorState_t currentState = QueryDataReceiverServiceState();
         switch (currentState) {
             case Idle:
                 CurrentNavStatus = NAV_STATUS_IDLE;
@@ -230,6 +238,9 @@ void __ISR(_SPI_2_VECTOR, IPL6SOFT) SPIFollowerISR(void) {
                 break;
             case CheckCrate:
                 CurrentNavStatus = NAV_STATUS_CHECK_CRATE;
+                break;
+            case TapeAligned:
+                CurrentNavStatus = NAV_STATUS_TAPE_ALIGNED;
                 break;
             default:
                 CurrentNavStatus = NAV_STATUS_ERROR;

@@ -1,3 +1,4 @@
+
 #ifndef SPIMASTER_SERVICE_H
 #define SPIMASTER_SERVICE_H
 
@@ -16,8 +17,9 @@
 #define NAV_CMD_STOP 0x50
 #define NAV_CMD_TURN_CW 0x60 // Clockwise 180 degrees
 #define NAV_CMD_TURN_CCW 0x70 // Counter-clockwise 180 degrees
-#define NAV_CMD_QUERY_STATUS 0x80
 #define NAV_CMD_ALIGN 0x90
+
+#define NAV_CMD_QUERY_STATUS 0xAA
 
 #define NAV_STATUS_MOVE_FORWARD_COMPLETE 0x11
 #define NAV_STATUS_MOVE_BACKWARD_COMPLETE 0x21
@@ -42,6 +44,7 @@
 #define NAV_STATUS_LINE_DISCOVER 0x5B
 #define NAV_STATUS_CHECK_CRATE 0x5C
 #define NAV_STATUS_INIT 0x5D
+#define NAV_STATUS_TAPE_ALIGNED 0x5E
 
 bool InitSPIMasterService(uint8_t Priority);
 bool PostSPIMasterService(ES_Event_t ThisEvent);

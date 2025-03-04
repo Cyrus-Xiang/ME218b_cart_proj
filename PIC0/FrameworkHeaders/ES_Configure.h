@@ -33,7 +33,7 @@
 /****************************************************************************/
 // This macro determines that nuber of services that are *actually* used in
 // a particular application. It will vary in value from 1 to MAX_NUM_SERVICES
-#define NUM_SERVICES 10
+#define NUM_SERVICES 8
 
 /****************************************************************************/
 // These are the definitions for Service 0, the lowest priority service.
@@ -67,16 +67,6 @@
 #endif
 
 
-// #if NUM_SERVICES > 1
-// // the header file with the public function prototypes
-
-// #define SERV_1_HEADER "TestHarnessService1.h"
-// // the name of the Init function
-// #define SERV_1_INIT InitTestHarnessService
-// // the name of the run function
-// #define SERV_1_RUN RunTestHarnessService01
-// #define SERV_1_QUEUE_SIZE 3
-// #endif
 
 /****************************************************************************/
 // These are the definitions for Service 2
@@ -95,11 +85,11 @@
 // These are the definitions for Service 3
 #if NUM_SERVICES > 3
 // the header file with the public function prototypes
-#define SERV_3_HEADER "BeaconIndicatorService.h"
+#define SERV_3_HEADER "SimpleHSM.h"
 // the name of the Init function
-#define SERV_3_INIT InitBeaconIndicatorService
+#define SERV_3_INIT InitSimpleHSM
 // the name of the run function
-#define SERV_3_RUN RunBeaconIndicatorService
+#define SERV_3_RUN RunSimpleHSM
 // How big should this services Queue be?
 #define SERV_3_QUEUE_SIZE 3
 #endif
@@ -134,11 +124,11 @@
 // These are the definitions for Service 6
 #if NUM_SERVICES > 6
 // the header file with the public function prototypes
-#define SERV_6_HEADER "ServoService.h"
+#define SERV_6_HEADER "Joint1ServoService.h"
 // the name of the Init function
-#define SERV_6_INIT InitServoService
+#define SERV_6_INIT InitJoint1ServoService
 // the name of the run function
-#define SERV_6_RUN RunServoService
+#define SERV_6_RUN RunJoint1ServoService
 // How big should this services Queue be?
 #define SERV_6_QUEUE_SIZE 3
 #endif
@@ -147,11 +137,11 @@
 // These are the definitions for Service 7
 #if NUM_SERVICES > 7
 // the header file with the public function prototypes
-#define SERV_7_HEADER "DCService.h"
+#define SERV_7_HEADER "Joint2ServoService.h"
 // the name of the Init function
-#define SERV_7_INIT InitDCMotorService
+#define SERV_7_INIT InitJoint2ServoService
 // the name of the run function
-#define SERV_7_RUN RunDCMotorService
+#define SERV_7_RUN RunJoint2ServoService
 // How big should this services Queue be?
 #define SERV_7_QUEUE_SIZE 3
 #endif
@@ -186,11 +176,11 @@
 // These are the definitions for Service 10
 #if NUM_SERVICES > 10
 // the header file with the public function prototypes
-#define SERV_10_HEADER "TestHarnessService10.h"
+#define SERV_10_HEADER "SimpleHSM.h"
 // the name of the Init function
-#define SERV_10_INIT InitTestHarnessService10
+#define SERV_10_INIT InitSimpleHSM
 // the name of the run function
-#define SERV_10_RUN RunTestHarnessService10
+#define SERV_10_RUN RunSimpleHSM
 // How big should this services Queue be?
 #define SERV_10_QUEUE_SIZE 3
 #endif
@@ -310,7 +300,10 @@ typedef enum
   ES_SEND_NEW_NAV_CMD,
   ES_ROTATE_ZERO,
   ES_ROTATE_90,
-
+  ES_ROTATE_180,
+  ES_NAVIGATOR_STATUS_CHANGE,
+  ES_NAVIGATOR_HEALTH_CHECK,
+  ES_SEND_DATA
   //new events
 
 } ES_EventType_t;
@@ -369,7 +362,7 @@ typedef enum
 #define TIMER10_RESP_FUNC PostGameLogicFSM
 #define TIMER11_RESP_FUNC TIMER_UNUSED
 #define TIMER12_RESP_FUNC PostStepperService
-#define TIMER13_RESP_FUNC PostBeaconIndicatorService
+#define TIMER13_RESP_FUNC TIMER_UNUSED
 #define TIMER14_RESP_FUNC PostSPIMasterService
 #define TIMER15_RESP_FUNC PostTestHarnessService0
 

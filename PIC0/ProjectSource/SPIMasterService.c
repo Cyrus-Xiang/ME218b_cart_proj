@@ -4,6 +4,7 @@
 #include "ES_Framework.h"
 #include "SPIMasterService.h"
 #include "dbprintf.h"
+#include "SimpleHSM.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -14,7 +15,7 @@ volatile static uint16_t CurrentNavigatorStatus;
 volatile static uint16_t PrevNavigatorStatus = NAV_STATUS_IDLE;
 static uint32_t LastTransferTime;
 static uint8_t LastSentCmd;
-static uint16_t QueryFreq = 10000; // in msq
+static uint16_t QueryFreq = 5000; // in msq
 #define DEBUG_CMD NAV_CMD_QUERY_STATUS
 
 /*---------------------------- Module Functions ---------------------------*/
@@ -87,6 +88,8 @@ const char* TranslateNavStatusToStr(uint8_t status) {
             return "NAV_STATUS_CHECK_CRATE";
         case NAV_STATUS_INIT:
             return "NAV_STATUS_INIT";
+        case NAV_STATUS_TAPE_ALIGNED:
+            return "NAV_STATUS_TAPE_ALIGNED";
         default:
             return "UNKNOWN_STATUS";
     }
@@ -94,6 +97,7 @@ const char* TranslateNavStatusToStr(uint8_t status) {
 /*------------------------------ Module Code ------------------------------*/
 bool InitSPIMasterService(uint8_t Priority)
 {
+    //DB_printf("Initializing SPI Master Service ...\r\n");
     MyPriority = Priority;
     InitSPI(); // Initialize SPI as master
 
@@ -124,6 +128,7 @@ bool PostSPIMasterService(ES_Event_t ThisEvent)
 
 ES_Event_t RunSPIMasterService(ES_Event_t ThisEvent)
 {
+    //DB_printf("Entering sending SPI running ...\r\n");
     ES_Event_t ReturnEvent;
     ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
 
@@ -134,9 +139,12 @@ ES_Event_t RunSPIMasterService(ES_Event_t ThisEvent)
     {
         // Query the slave for its status
         SendSPICommand(NAV_CMD_QUERY_STATUS);
+        DB_printf("We are Sending SPI Query command ...\r\n");
+        
     } else {
         if (ThisEvent.EventType == ES_NEW_NAV_CMD && ThisEvent.EventParam != 0) {
             SendSPICommand(ThisEvent.EventParam);
+            DB_printf("We are Sending SPI param command ...\r\n");
         }
     }
 
@@ -164,7 +172,7 @@ void InitSPI(void)
     // Step 5: Enable Enhanced Buffer
     SPI1CONbits.ENHBUF = 0;
     // Step 6: Set Baudrate
-    SPI1BRG = 10; // Corresponds to 10 kHz
+    SPI1BRG = 0; // Corresponds to 10 kHz
     // Step 7: Clear the SPIROV Bit
     SPI1STATbits.SPIROV = 0;
     // Step 8: Write desired settings to SPIxCON
@@ -219,13 +227,13 @@ void __ISR(_SPI_1_VECTOR, IPL6SOFT) SPIMasterISR(void) {
             DB_printf("[SPI] Received status: %s\r\n", TranslateNavStatusToStr(ReceivedStatus));
             CmdEvent.EventType = ES_NAVIGATOR_HEALTH_CHECK;
             CmdEvent.EventParam = ReceivedStatus;
-            PostPlannerHSM(CmdEvent);
+            PostSimpleHSM(CmdEvent);
         } else if (PrevNavigatorStatus != ReceivedStatus) {
             DB_printf("[SPI] Previous status: %s\r\n", TranslateNavStatusToStr(PrevNavigatorStatus));
             DB_printf("[SPI] Received status: %s\r\n", TranslateNavStatusToStr(ReceivedStatus));
             CmdEvent.EventType = ES_NAVIGATOR_STATUS_CHANGE;
             CmdEvent.EventParam = ReceivedStatus;
-            PostPlannerHSM(CmdEvent);
+            PostSimpleHSM(CmdEvent);
             PrevNavigatorStatus = ReceivedStatus;
         }
     }

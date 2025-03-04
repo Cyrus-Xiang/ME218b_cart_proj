@@ -26,6 +26,7 @@
 #include "dbprintf.h"
 #include <sys/attribs.h>
 #include "terminal.h"
+#include "GameLogicFSM.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -182,7 +183,7 @@ ES_Event_t RunStepperService(ES_Event_t ThisEvent)
       H_bridge4A_LAT = 0;
       ES_Event_t Event2Post;
       Event2Post.EventType = ES_STEPPER_COMPLETE;
-      PostPlannerHSM(Event2Post);
+      PostGameLogicFSM(Event2Post);
       DB_printf("steps completed is %d\n", stepsCompleted);
     }else{
       //step1: step a step

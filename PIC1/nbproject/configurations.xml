@@ -51,6 +51,7 @@
       <itemPath>ProjectHeaders/PIC32_AD_Lib.h</itemPath>
       <itemPath>ProjectHeaders/MotorService.h</itemPath>
       <itemPath>ProjectHeaders/GameLogicFSM.h</itemPath>
+      <itemPath>ProjectHeaders/DataReceiverService.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -74,6 +75,7 @@
       <itemPath>ProjectSource/PIC32_AD_Lib.c</itemPath>
       <itemPath>ProjectSource/MotorService.c</itemPath>
       <itemPath>ProjectSource/GameLogicFSM.c</itemPath>
+      <itemPath>ProjectSource/DataReceiverService.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -92,7 +94,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>snap</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>4.50</languageToolchainVersion>
+        <languageToolchainVersion>4.30</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -290,7 +292,7 @@
         <C32Global>
         </C32Global>
       </item>
-      <item path="ProjectSource/SPIFollowerService.c" ex="true" overriding="false">
+      <item path="ProjectSource/SPIFollowerService.c" ex="false" overriding="false">
         <C32>
         </C32>
         <C32-AR>

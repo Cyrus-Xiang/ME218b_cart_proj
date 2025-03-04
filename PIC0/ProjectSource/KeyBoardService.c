@@ -1,177 +1,334 @@
+/****************************************************************************
+ Module
+   KeyboardService.c
+
+ Revision
+   1.0.1
+
+ Description
+   This is a Keyboard file for implementing a simple service under the
+   Gen2 Events and Services Framework.
+
+ Notes
+
+ History
+ When           Who     What/Why
+ -------------- ---     --------
+ 01/16/12 09:58 jec      began conversion from KeyboardFSM.c
+****************************************************************************/
+/*----------------------------- Include Files -----------------------------*/
+/* include header files for this state machine as well as any machines at the
+   next lower level in the hierarchy that are sub-machines to this machine
+*/
 #include "ES_Configure.h"
 #include "ES_Framework.h"
-#include "ES_Events.h"
 #include "KeyboardService.h"
 #include "dbprintf.h"
-#include "ES_Port.h"
-#include "PlannerHSM.h"
-#include "SPIMasterService.h"
+
 
 /*----------------------------- Module Defines ----------------------------*/
-#define INIT_COMPLETE 'i'
-#define HAS_CRATE 'p'
-#define SIDE_DETECTED 'l'
 
-#define PROCESS_COLUMN 'c'
-#define AT_STACK 'g'
-#define DROPPED 'u'
-#define CHECK_ROBO_STATUS 'v'
-#define AT_CRATE 't'
-#define PICKUP_CRATE 'k'
-#define COLUMN_COMPLETE 'o'
-#define STEPPER_FORWARD 'f'
-#define STEPPER_BACKWARD 'b'
+/*---------------------------- Module Functions ---------------------------*/
+/* prototypes for private functions for this service.They should be functions
+   relevant to the behavior of this service
+*/
 
-#define NAV_MOVE_FORWARD 'w'
-#define NAV_MOVE_BACKWARD 's'
-#define NAV_TURN_LEFT 'a'
-#define NAV_TURN_RIGHT 'd'
-#define NAV_STOP 'x'
-#define NAV_TURN_CW 'e'
-#define NAV_TURN_CCW 'q'
-
-#define QUERY_STATUS 'z'
-
-#define START_PLANNER '0'
-#define TAPE_ALIGNED '1'
-#define AT_COLUMN_INTERSECTION '2'
 /*---------------------------- Module Variables ---------------------------*/
+// with the introduction of Gen2, we need a module level Priority variable
 static uint8_t MyPriority;
 
 /*------------------------------ Module Code ------------------------------*/
+/****************************************************************************
+ Function
+     InitKeyboardService
+
+ Parameters
+     uint8_t : the priorty of this service
+
+ Returns
+     bool, false if error in initialization, true otherwise
+
+ Description
+     Saves away the priority, and does any
+     other required initialization for this service
+ Notes
+
+ Author
+     J. Edward Carryer, 01/16/12, 10:00
+****************************************************************************/
 bool InitKeyboardService(uint8_t Priority)
 {
-    MyPriority = Priority;
-    ES_Event_t ThisEvent;
-    ThisEvent.EventType = ES_INIT;
-    return ES_PostToService(MyPriority, ThisEvent);
+  ES_Event_t ThisEvent;
+
+  MyPriority = Priority;
+  /********************************************
+   in here you write your initialization code
+   *******************************************/
+  // post the initial transition event
+  ThisEvent.EventType = ES_INIT;
+  DB_printf("KeyboardService initialized\r\n");
+  if (ES_PostToService(MyPriority, ThisEvent) == true)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
+/****************************************************************************
+ Function
+     PostKeyboardService
+
+ Parameters
+     EF_Event_t ThisEvent ,the event to post to the queue
+
+ Returns
+     bool false if the Enqueue operation failed, true otherwise
+
+ Description
+     Posts an event to this state machine's queue
+ Notes
+
+ Author
+     J. Edward Carryer, 10/23/11, 19:25
+****************************************************************************/
 bool PostKeyboardService(ES_Event_t ThisEvent)
 {
-    return ES_PostToService(MyPriority, ThisEvent);
+  return ES_PostToService(MyPriority, ThisEvent);
 }
 
+/****************************************************************************
+ Function
+    RunKeyboardService
+
+ Parameters
+   ES_Event_t : the event to process
+
+ Returns
+   ES_Event, ES_NO_EVENT if no error ES_ERROR otherwise
+
+ Description
+   add your description here
+ Notes
+
+ Author
+   J. Edward Carryer, 01/15/12, 15:23
+****************************************************************************/
 ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
 {
-    ES_Event_t ReturnEvent;
-    ReturnEvent.EventType = ES_NO_EVENT;
-    ES_Event_t CurEvent;
+  ES_Event_t ReturnEvent;
+  ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
+  /********************************************
+   in here you write your service code
+   *******************************************/
+  if (ThisEvent.EventType == ES_NEW_KEY)
+  {
+    ES_Event_t Event2Post;
+    switch (ThisEvent.EventParam)
+    {
+    case 'a':
 
-    if (ThisEvent.EventType == ES_NEW_KEY)
-    {   
-        char key = ThisEvent.EventParam;
-        switch (key)
-        {
-            case '7':
-                CurEvent.EventType = ES_STEPPER_BWD;
-                CurEvent.EventParam = 300;
-                PostStepperService(CurEvent);
-                DB_printf("Stepper Backward\n");
-            break;
-            case '8':
-                CurEvent.EventType = ES_STEPPER_FWD;
-                CurEvent.EventParam = 300;
-                PostStepperService(CurEvent);
-                DB_printf("Stepper Forward\n");
-            break;
-            case INIT_COMPLETE:
-                CurEvent.EventType = ES_INIT_COMPLETE;
-                PostPlannerHSM(CurEvent);
-                break;
-            case HAS_CRATE:
-                CurEvent.EventType = ES_HAS_CRATE;
-                PostPlannerHSM(CurEvent);
-                break;
-            case SIDE_DETECTED:
-                CurEvent.EventType = ES_SIDE_DETECTED;
-                PostPlannerHSM(CurEvent);
-                break;
-            case AT_STACK:
-                CurEvent.EventType = ES_AT_STACK;
-                PostPlannerHSM(CurEvent);
-                break;
-            case DROPPED:
-                CurEvent.EventType = ES_DROPPED;
-                PostPlannerHSM(CurEvent);
-                break;
-            case AT_CRATE:
-                CurEvent.EventType = ES_AT_CRATE;
-                PostPlannerHSM(CurEvent);
-                break;
-            case PICKUP_CRATE:
-                CurEvent.EventType = ES_HAS_CRATE;
-                PostPlannerHSM(CurEvent);
-                break;
-            case COLUMN_COMPLETE:
-                CurEvent.EventType = ES_COLUMN_COMPLETE;
-                PostPlannerHSM(CurEvent);
-                break;
-            case STEPPER_FORWARD:
-                CurEvent.EventType = ES_STEPPER_FWD;
-                CurEvent.EventParam = 100;
-                PostStepperService(CurEvent);
-                break;
-            case STEPPER_BACKWARD:
-                CurEvent.EventType = ES_STEPPER_BWD;
-                CurEvent.EventParam = 100;
-                PostStepperService(CurEvent);
-                break;
-            case NAV_MOVE_FORWARD:
-                CurEvent.EventType = ES_NEW_NAV_CMD;
-                CurEvent.EventParam = NAV_CMD_MOVE_FORWARD;
-                PostSPIMasterService(CurEvent);
-                break;
-            case NAV_MOVE_BACKWARD:
-                CurEvent.EventType = ES_NEW_NAV_CMD;
-                CurEvent.EventParam = NAV_CMD_MOVE_BACKWARD;
-                PostSPIMasterService(CurEvent);
-                break;
-            case NAV_TURN_LEFT:
-                CurEvent.EventType = ES_NEW_NAV_CMD;
-                CurEvent.EventParam = NAV_CMD_TURN_LEFT;
-                PostSPIMasterService(CurEvent);
-                break;
-            case NAV_TURN_RIGHT:
-                CurEvent.EventType = ES_NEW_NAV_CMD;
-                CurEvent.EventParam = NAV_CMD_TURN_RIGHT;
-                PostSPIMasterService(CurEvent);
-                break;
-            case NAV_STOP:
-                CurEvent.EventType = ES_NEW_NAV_CMD;
-                CurEvent.EventParam = NAV_CMD_STOP;
-                PostSPIMasterService(CurEvent);
-                break;
-            case NAV_CMD_TURN_CW:
-                CurEvent.EventType = ES_NEW_NAV_CMD;
-                CurEvent.EventParam = NAV_CMD_TURN_CW;
-                PostSPIMasterService(CurEvent);
-                break;
-            case NAV_CMD_TURN_CCW:
-                CurEvent.EventType = ES_NEW_NAV_CMD;
-                CurEvent.EventParam = NAV_CMD_TURN_CCW;
-                PostSPIMasterService(CurEvent);
-                break;
-            case START_PLANNER:
-                CurEvent.EventType = ES_START_PLANNER;
-                PostPlannerHSM(CurEvent);
-                break;
-            case TAPE_ALIGNED:
-                CurEvent.EventType = ES_TAPE_ALIGNED;
-                PostPlannerHSM(CurEvent);
-                break;
-            case AT_COLUMN_INTERSECTION:
-                CurEvent.EventType = ES_AT_COLUMN_INTERSECTION;
-                PostPlannerHSM(CurEvent);
-                break;
-            case QUERY_STATUS:
-                CurEvent.EventType = ES_NEW_NAV_CMD;
-                CurEvent.EventParam = NAV_CMD_QUERY_STATUS;
-                PostSPIMasterService(CurEvent);
-                break;
-            default:
-                return ReturnEvent;
-        }
+        break;
+    case 'b':
+
+        break;
+    case 'c':
+
+        break;
+    case 'd':
+
+        break;
+    case 'e':
+
+        break;
+    case 'f':
+        /* code */
+        break;
+    case 'g':
+        /* code */
+        break;
+    case 'h':
+        /* code */
+        break;
+    case 'i':
+
+        break;
+    case 'j':
+
+        break;
+    case 'k':
+ 
+        break;
+    case 'l':
+
+        break;
+    case 'm':
+        /* code */
+        break;
+    case 'n':
+        /* code */
+        break;
+    case 'o':
+        /* code */
+        break;
+    case 'p':
+        /* code */
+        break;
+    case 'q':
+        /* code */
+        break;
+    case 'r':
+        /* code */
+        break;
+    case 's':
+
+        break;
+    case 't':
+        /* code */
+        break;
+    case 'u':
+        /* code */
+        break;
+    case 'v':
+        /* code */
+        break;
+    case 'w':
+
+ 
+        break;
+    case 'x':
+
+        break;
+    case 'y':
+        /* code */
+        break;
+    case 'z':
+        /* code */
+        break;
+    case '0':
+
+        break;
+    case '1':
+
+        break;
+    case '2':
+
+        break;
+    case '3':
+
+        break;
+    case '4':
+
+        break;
+    case '5':
+
+        break;
+    case '6':
+
+        break;
+    case '7':
+
+
+        break;
+    case '8':
+
+        break;
+    case '9':
+        /* code */
+        break;
+    case 'A':
+
+    break;
+    case 'B':
+        /* code */
+        break;
+    case 'C':
+        /* code */
+        break;
+    case 'D':
+        /* code */
+        break;
+    case 'E':
+        /* code */
+        break;
+    case 'F':
+        /* code */
+        break;
+    case 'G':
+        /* code */
+        break;
+    case 'H':
+        /* code */
+        break;
+    case 'I':
+        /* code */
+        break;
+    case 'J':
+        /* code */
+        break;
+    case 'K':
+        /* code */
+        break;
+    case 'L':
+        /* code */
+        break;
+    case 'M':
+        /* code */
+        break;
+    case 'N':
+        /* code */
+        break;
+    case 'O':
+        /* code */
+        break;
+    case 'P':
+        /* code */
+        break;
+    case 'Q':
+        /* code */
+        break;
+    case 'R':
+        /* code */
+        break;
+    case 'S':
+        /* code */
+        break;
+    case 'T':
+        /* code */
+        break;
+    case 'U':
+        /* code */
+        break;
+    case 'V':
+        /* code */
+        break;
+    case 'W':
+        /* code */
+        break;
+    case 'X':
+        /* code */
+        break;
+    case 'Y':
+        /* code */
+        break;
+    case 'Z':
+        /* code */
+        break;
+
+    default:
+        break;
     }
-    return ReturnEvent;
+  }
+  
+  return ReturnEvent;
 }
+
+/***************************************************************************
+ private functions
+ ***************************************************************************/
+
+/*------------------------------- Footnotes -------------------------------*/
+/*------------------------------ End of file ------------------------------*/
+

@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "es_framework.h": "c",
+        "keyboardservice.h": "c",
+        "es_configure.h": "c"
+    }
+}

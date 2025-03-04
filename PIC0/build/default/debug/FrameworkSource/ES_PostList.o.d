@@ -22,7 +22,8 @@ build/default/debug/FrameworkSource/ES_PostList.o: \
  FrameworkHeaders/ES_General.h FrameworkHeaders/ES_Timers.h \
  ProjectHeaders/SimpleHSM.h ProjectHeaders/SPIMasterService.h \
  ProjectHeaders/StepperService.h ProjectHeaders/Joint1ServoService.h \
- ProjectHeaders/Joint2ServoService.h
+ ProjectHeaders/Joint2ServoService.h \
+ ProjectHeaders/BeaconIndicatorService.h
 
 FrameworkSource/../FrameworkHeaders/ES_Port.h:
 
@@ -87,3 +88,5 @@ ProjectHeaders/StepperService.h:
 ProjectHeaders/Joint1ServoService.h:
 
 ProjectHeaders/Joint2ServoService.h:
+
+ProjectHeaders/BeaconIndicatorService.h:

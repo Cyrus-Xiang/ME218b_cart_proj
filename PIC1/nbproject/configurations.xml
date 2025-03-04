@@ -260,7 +260,7 @@
         <C32Global>
         </C32Global>
       </item>
-      <item path="ProjectHeaders/SPIFollowerService.h" ex="true" overriding="false">
+      <item path="ProjectHeaders/SPIFollowerService.h" ex="false" overriding="false">
         <C32>
         </C32>
         <C32-AR>

@@ -24,8 +24,9 @@ build/default/debug/FrameworkSource/ES_Framework.o: \
  ProjectHeaders/KeyboardService.h FrameworkHeaders/ES_Framework.h \
  ProjectHeaders/SimpleHSM.h ProjectHeaders/SPIMasterService.h \
  ProjectHeaders/StepperService.h ProjectHeaders/Joint1ServoService.h \
- ProjectHeaders/Joint2ServoService.h ProjectHeaders/EventCheckWrapper.h \
- ProjectHeaders/EventCheckers.h
+ ProjectHeaders/Joint2ServoService.h \
+ ProjectHeaders/BeaconIndicatorService.h \
+ ProjectHeaders/EventCheckWrapper.h ProjectHeaders/EventCheckers.h
 
 FrameworkSource/../FrameworkHeaders/ES_Configure.h:
 
@@ -90,6 +91,8 @@ ProjectHeaders/StepperService.h:
 ProjectHeaders/Joint1ServoService.h:
 
 ProjectHeaders/Joint2ServoService.h:
+
+ProjectHeaders/BeaconIndicatorService.h:
 
 ProjectHeaders/EventCheckWrapper.h:
 

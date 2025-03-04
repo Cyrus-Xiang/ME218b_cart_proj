@@ -2,6 +2,7 @@
 #include "ES_Framework.h"
 #include "dbprintf.h"
 #include "DataReceiverService.h"
+#include "SPIFollowerService.h"
 
 static uint8_t MyPriority;
 static uint8_t ReceivedData = 0;
@@ -32,6 +33,16 @@ ES_Event_t RunDataReceiverService(ES_Event_t ThisEvent) {
     if (ThisEvent.EventType == ES_DATA_RECEIVED) {
         ReceivedData = ThisEvent.EventParam;
         DB_printf("[DataReceiverService] Received data: %X\r\n", ReceivedData);
+    }else if (ThisEvent.EventType == ES_NEW_PIC0_CMD){
+        ReceivedData = ThisEvent.EventParam;
+        DB_printf("[DataReceiver] Received SPI command %d\r\n", ReceivedData);
+        ES_Event_t CmdEvent;
+        if (ThisEvent.EventParam == CMD_MOTOR_MOVE_FORWARDS){
+            CmdEvent.EventType = ES_MOTOR_FWD;
+            CmdEvent.EventParam = 90;
+            PostMotorService(CmdEvent);
+            CurrentState = LineFollowForward;
+        }
     }
 
     return ReturnEvent;

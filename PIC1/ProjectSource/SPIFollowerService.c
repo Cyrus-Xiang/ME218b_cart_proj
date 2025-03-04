@@ -34,6 +34,8 @@ const char* TranslateNavCmdToStr(uint8_t command) {
             return "NAV_CMD_STOP";
         case NAV_CMD_ALIGN:
             return "NAV_CMD_ALIGN";
+        case CMD_MOTOR_MOVE_FORWARDS:
+            return "CMD_MOTOR_MOVE_FORWARDS";
         default:
             DB_printf("Unknown command: %x\r\n", command);
             return "UNKNOWN_COMMAND";
@@ -196,11 +198,12 @@ void __ISR(_SPI_2_VECTOR, IPL6SOFT) SPIFollowerISR(void) {
     DB_printf("[SPI] Received byte: %d\r\n", receivedByte); // Add debug print
 
     // Process command directly
-    if(receivedByte >= NAV_CMD_MOVE_FORWARD && receivedByte <= NAV_CMD_ALIGN) {
+    //if(receivedByte >= NAV_CMD_MOVE_FORWARD && receivedByte <= NAV_CMD_ALIGN) {
+    if(receivedByte != NAV_CMD_QUERY_STATUS) {
         ReceivedCmd = receivedByte;
         DB_printf("[SPI] Received nav command: %s\r\n", TranslateNavCmdToStr(ReceivedCmd));
         ES_Event_t CmdEvent;
-        CmdEvent.EventType = ES_NEW_NAV_CMD;
+        CmdEvent.EventType = ES_NEW_PIC0_CMD;
         CmdEvent.EventParam = ReceivedCmd;
         PostDataReceiverService(CmdEvent);
     } else if (receivedByte == NAV_CMD_QUERY_STATUS) {

@@ -203,7 +203,7 @@ ES_Event_t RunTapeFSM(ES_Event_t ThisEvent)
     Event2Post.EventParam = 100;
     //PostTapeFSM(Event2Post);
     ADC_MultiRead(CurrADVal);
-    DB_printf("[reflectance array]: %d %d %d  %d %d %d\r\n", CurrADVal[0], CurrADVal[1], CurrADVal[2], CurrADVal[3], CurrADVal[4], CurrADVal[5]);
+    //DB_printf("[reflectance array]: %d %d %d  %d %d %d\r\n", CurrADVal[0], CurrADVal[1], CurrADVal[2], CurrADVal[3], CurrADVal[4], CurrADVal[5]);
     //DB_printf("IR Sensor State: %d", PORTBbits.RB14);
     // Event2Post.EventType = ES_MOTOR_CW_CONTINUOUS;
     // Event2Post.EventParam = 70;

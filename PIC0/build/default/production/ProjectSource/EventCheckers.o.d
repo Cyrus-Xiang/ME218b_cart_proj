@@ -12,7 +12,7 @@ build/default/production/ProjectSource/EventCheckers.o: \
  ProjectHeaders/KeyboardService.h ProjectHeaders/SimpleHSM.h \
  ProjectHeaders/SPIMasterService.h ProjectHeaders/StepperService.h \
  ProjectHeaders/Joint1ServoService.h ProjectHeaders/Joint2ServoService.h \
- ProjectHeaders/EventCheckers.h
+ ProjectHeaders/BeaconIndicatorService.h ProjectHeaders/EventCheckers.h
 
 FrameworkHeaders/ES_Configure.h:
 
@@ -63,5 +63,7 @@ ProjectHeaders/StepperService.h:
 ProjectHeaders/Joint1ServoService.h:
 
 ProjectHeaders/Joint2ServoService.h:
+
+ProjectHeaders/BeaconIndicatorService.h:
 
 ProjectHeaders/EventCheckers.h:

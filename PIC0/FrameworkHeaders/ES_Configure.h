@@ -303,8 +303,9 @@ typedef enum
   ES_ROTATE_180,
   ES_NAVIGATOR_STATUS_CHANGE,
   ES_NAVIGATOR_HEALTH_CHECK,
-  ES_SEND_DATA
-  //new events
+  ES_SEND_DATA,
+  //events defined by Cyrus
+  ES_GAME_START_BUTTON_PRESSED,
 
 } ES_EventType_t;
 
@@ -340,7 +341,7 @@ typedef enum
 
 /****************************************************************************/
 // This is the list of event checking functions
-#define EVENT_CHECK_LIST Check4Keystroke
+#define EVENT_CHECK_LIST Check4Keystroke, Check4GameStartButton
 
 /****************************************************************************/
 // These are the definitions for the post functions to be executed when the

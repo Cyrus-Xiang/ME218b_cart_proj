@@ -73,6 +73,15 @@ bool InitGameLogicFSM(uint8_t Priority)
   ES_Event_t ThisEvent;
 
   MyPriority = Priority;
+  /**************************************
+   * *****Initialize the pins
+   *********************************/
+  //for game ready button
+  TRISBbits.RB2 = 1; //input
+  ANSELBbits.RB2 = 0; //digital
+  //for LED in game progress indicator
+  TRISBbits.RB3 = 0; //output
+  ANSELBbits.RB3 = 0; //digital
   // put us into the Initial PseudoState
   CurrentState = Setup_Game_s;
   ES_Timer_InitTimer(IdleSetup_TIMER, IdleTimeAtSetup);

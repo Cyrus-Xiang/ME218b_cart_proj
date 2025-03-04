@@ -113,9 +113,22 @@ bool Check4Keystroke(void)
     ES_Event_t ThisEvent;
     ThisEvent.EventType   = ES_NEW_KEY;
     ThisEvent.EventParam  = GetNewKey();
-    ES_PostAll(ThisEvent);
+    PostKeyboardService(ThisEvent);
     return true;
   }
   return false;
+}
+
+bool Check4GameStartButton(void){
+  if (PORTBbis.RB2 == 1)
+  {
+    ES_Event_t ThisEvent;
+    ThisEvent.EventType = ES_GAME_START_BUTTON_PRESSED;
+    PostGameLogicFSM(ThisEvent);
+    DB_printf("event checker: game start button pressed \n");
+    return true;
+  }
+  return false;
+  
 }
 

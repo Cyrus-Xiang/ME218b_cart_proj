@@ -16,7 +16,7 @@
 // State definitions for use with the query function
 typedef enum
 {
-  P_Init_Game_s,Setup_Game_s, FindTape_Game_s,AligningToLine_Game_s, GoToStackB_Game_s,
+  P_Init_Game_s,Setup_Game_s, FindTape_Game_s,AligningToLine_Game_s, GoToInterB_Game_s,
   AligningToStack_Game_s, GoingToStack_Game_s, UnloadingCrate_Game_s
 }GameLogicState_t;
 

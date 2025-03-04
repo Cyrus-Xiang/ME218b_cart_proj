@@ -185,8 +185,8 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
     {
       if (ThisEvent.EventType == ES_TAPE_FOUND)
       {
-        CurrentState = GoToStackB_Game_s;
-        DB_printf("Transition from FindTape_Game_s to GoToStackB_Game_s\n");
+        CurrentState = GoToInterB_Game_s;
+        DB_printf("Transition from FindTape_Game_s to GoToInterB_Game_s\n");
         ES_Event_t Event2Post;
         Event2Post.EventType = ES_MOTOR_STOP;
         PostMotorService(Event2Post);
@@ -206,18 +206,18 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
     {
       if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == ActionAllowedTime_TIMER)
       {
-        CurrentState = GoToStackB_Game_s;
+        CurrentState = GoToInterB_Game_s;
         DB_printf("cart is assumed to be aligned to line (tape) already\n");
-        DB_printf("Transition from AligningToLine_Game_s to GoToStackB_Game_s\n");
+        DB_printf("Transition from AligningToLine_Game_s to GoToInterB_Game_s\n");
       }
     }
-    case GoToStackB_Game_s:
+    case GoToInterB_Game_s:
     {
-      DB_printf("GoTOStackB_Game_s and received an event\n");
+      DB_printf("GoToInterB_Game_s and received an event\n");
       if (ThisEvent.EventType == ES_RIGHT_INTERSECTION_DETECT)
       {
         CurrentState = AligningToStack_Game_s;
-        DB_printf("Transition from GoToStackB_Game_s to AligningToStack_Game_s\n");
+        DB_printf("Transition from GoToInterB_Game_s to AligningToStack_Game_s\n");
         ES_Event_t Event2Post;
         Event2Post.EventType = ES_TAPE_STOP;
         PostTapeFSM(Event2Post);
@@ -241,7 +241,7 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
         ES_Event_t Event2Post;
         Event2Post.EventType = ES_TAPE_LookForTape;
         PostTapeFSM(Event2Post);
-        DB_printf("rotate ensure timer expired \n");
+        DB_printf("rotate action allowed  timer expired \n");
         DB_printf("tape service posted, looking for tape\n");
       }
 

@@ -345,7 +345,7 @@ typedef enum
 // Unlike services, any combination of timers may be used and there is no
 // priority in servicing them
 #define TIMER_UNUSED ((pPostFunc)0)
-#define TIMER0_RESP_FUNC TIMER_UNUSED
+#define TIMER0_RESP_FUNC PostGameLogicFSM
 #define TIMER1_RESP_FUNC TIMER_UNUSED
 #define TIMER2_RESP_FUNC TIMER_UNUSED
 #define TIMER3_RESP_FUNC TIMER_UNUSED
@@ -372,7 +372,9 @@ typedef enum
 // #define NAV_STATE_DEBUG_TIMER 14
 #define TapeTest_TIMER 9
 #define Motor_Turning_TIMER 10
-#define ActionAllowedTime_TIMER 14
+#define RotateEnsure_TIMER 0
 #define IdleSetup_TIMER 13
+#define ActionAllowedTime_TIMER 14
+
 
 #endif /* ES_CONFIGURE_H */

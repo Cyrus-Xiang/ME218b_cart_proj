@@ -44,6 +44,8 @@
 // type of state variable should match htat of enum in header file
 #define ActionTimeAllowed 2000
 #define IdleTimeAtSetup 3000
+#define RotateGuranteeTime 1000 //for the time between we send out rotate command and find tape command in aligning to stack state
+#define TapeFollowGuranteeTime 2000 //time that is guranteed for tape following to be executed 
 #define tape_follow_speed 45 // speed for tape following in duty cycle (max=100)
 #define rotate_speed 40 // speed for rotating in duty cycle (max=100)
 
@@ -184,7 +186,7 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
       if (ThisEvent.EventType == ES_TAPE_FOUND)
       {
         CurrentState = GoToStackB_Game_s;
-        DB_printf("GameLogicFSM: Transition to GoToStackB_Game_s\n");
+        DB_printf("Transition from FindTape_Game_s to GoToStackB_Game_s\n");
         ES_Event_t Event2Post;
         Event2Post.EventType = ES_MOTOR_STOP;
         PostMotorService(Event2Post);
@@ -195,29 +197,37 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
         Event2Post.EventParam = tape_follow_speed;
         PostTapeFSM(Event2Post);
         DB_printf("tape service posted, following tape in reverse\n");
-        
+        ES_Timer_InitTimer(ActionAllowedTime_TIMER, TapeFollowGuranteeTime);
       }
       
     }
     break;
+    case AligningToLine_Game_s:
+    {
+      if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == ActionAllowedTime_TIMER)
+      {
+        CurrentState = GoToStackB_Game_s;
+        DB_printf("cart is assumed to be aligned to line (tape) already\n");
+        DB_printf("Transition from AligningToLine_Game_s to GoToStackB_Game_s\n");
+      }
+    }
     case GoToStackB_Game_s:
     {
       DB_printf("GoTOStackB_Game_s and received an event\n");
       if (ThisEvent.EventType == ES_RIGHT_INTERSECTION_DETECT)
       {
         CurrentState = AligningToStack_Game_s;
-        DB_printf("GameLogicFSM: Transition to AligningToStack_Game_s\n");
+        DB_printf("Transition from GoToStackB_Game_s to AligningToStack_Game_s\n");
         ES_Event_t Event2Post;
         Event2Post.EventType = ES_TAPE_STOP;
         PostTapeFSM(Event2Post);
-             DB_printf("tape service posted, stopping\n");
+        DB_printf("tape service posted, stopping\n");
         Event2Post.EventType = ES_MOTOR_CCW_CONTINUOUS;
         Event2Post.EventParam = rotate_speed;
         PostMotorService(Event2Post);
         DB_printf("motor service posted, turning ccw\n");
-        Event2Post.EventType = ES_TAPE_LookForTape;
-        PostTapeFSM(Event2Post);
-        DB_printf("tape service posted, looking for tape\n");
+        ES_Timer_InitTimer(ActionAllowedTime_TIMER, RotateGuranteeTime);
+        DB_printf("rotate action allowed timer started with %d ms\n", RotateGuranteeTime);
 
       }
       
@@ -225,8 +235,19 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
     break;
     case AligningToStack_Game_s:
     {
+      DB_printf("an event received while in AligningToStack_Game_s\n");
+      if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == ActionAllowedTime_TIMER)
+      {
+        ES_Event_t Event2Post;
+        Event2Post.EventType = ES_TAPE_LookForTape;
+        PostTapeFSM(Event2Post);
+        DB_printf("rotate ensure timer expired \n");
+        DB_printf("tape service posted, looking for tape\n");
+      }
+
       if (ThisEvent.EventType == ES_TAPE_FOUND)
       {
+        DB_printf("tape found EVENT received\n");
         CurrentState = GoingToStack_Game_s;
         DB_printf("GameLogicFSM: Transition to GoingToStack_Game_s\n");
         ES_Event_t Event2Post;
@@ -238,6 +259,7 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
         PostTapeFSM(Event2Post);
         DB_printf("tape service posted, following tape in reverse\n");
       }
+      
     }
     break;
     case GoingToStack_Game_s:

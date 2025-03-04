@@ -71,8 +71,8 @@ static uint8_t Dir = 0; // the direction of the motor, 0 = forward, 1 = backward
 #define Control_interval 10 // in ms, max value with prescalar of 16 is 65535*16/20MHz = 52.4288ms
 //the K values used will be scaled based on commanded targetDutyCycle
 //because when the cart is moving faster, K values should be smaller to avoid aggressive control
-#define Kp_base 650
-#define Ki_base 300
+#define Kp_base 350
+#define Ki_base 130
 #define Kd_base 0
 static int16_t Kp;
 static int16_t Ki;
@@ -197,14 +197,14 @@ ES_Event_t RunTapeFSM(ES_Event_t ThisEvent)
   ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
   if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == TapeTest_TIMER)
   {
-    ES_Timer_InitTimer(TapeTest_TIMER, 2000);
+    ES_Timer_InitTimer(TapeTest_TIMER, 500);
     //DB_printf("Tape Test Timer\r\n");
     ES_Event_t Event2Post;
     Event2Post.EventType = ES_TAPE_FOLLOW_REV;
     Event2Post.EventParam = 100;
     //PostTapeFSM(Event2Post);
     ADC_MultiRead(CurrADVal);
-    //DB_printf("[reflectance array]: %d %d %d  %d %d %d\r\n", CurrADVal[0], CurrADVal[1], CurrADVal[2], CurrADVal[3], CurrADVal[4], CurrADVal[5]);
+    DB_printf("[reflectance array]: %d %d %d  %d %d %d\r\n", CurrADVal[0], CurrADVal[1], CurrADVal[2], CurrADVal[3], CurrADVal[4], CurrADVal[5]);
     //DB_printf("IR Sensor State: %d", PORTBbits.RB14);
     // Event2Post.EventType = ES_MOTOR_CW_CONTINUOUS;
     // Event2Post.EventParam = 70;
@@ -551,7 +551,7 @@ void __ISR(_TIMER_4_VECTOR, IPL5SOFT) control_update_ISR(void)
   {
     //DB_printf("Looking for tape \n");
     
-    if (CurrADVal[2]+CurrADVal[3] > 700)
+    if (CurrADVal[2]+CurrADVal[3] > 600)
     {
       DB_printf("Found tape \n");
       ES_Event_t Event2Post;

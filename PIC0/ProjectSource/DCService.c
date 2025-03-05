@@ -7,8 +7,6 @@
 
 /*----------------------------- Module Defines ----------------------------*/
 #define ONE_SEC 1000 // 1000 ms
-static uint16_t interval = 5;
-
 /*---------------------------- Module Variables ---------------------------*/
 static uint8_t MyPriority;
 #define DC_1 LATAbits.LATA0

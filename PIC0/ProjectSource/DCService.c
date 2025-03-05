@@ -2,6 +2,7 @@
 #include "ES_Framework.h"
 #include "DCService.h"
 #include <xc.h>
+#include "DCService.h"
 
 
 /*----------------------------- Module Defines ----------------------------*/
@@ -10,57 +11,13 @@ static uint16_t interval = 5;
 
 /*---------------------------- Module Variables ---------------------------*/
 static uint8_t MyPriority;
-uint16_t currentDutyCycle = 90; 
-static bool forward = true;    // Default duty cycle (50%)
-#define MotorDirection1 PORTAbits.RA2
-#define MotorDirection2 PORTAbits.RA3
-// typedef enum{
-//     CW = 0,
-//     CCW
-// }MotorDirection_t;
-static MotorDirection_t Direction;
-#define DC_1 LATAbits.LATA1
-#define DC_2 LATAbits.LATA2
+#define DC_1 LATAbits.LATA0
+#define DC_2 LATAbits.LATA1
 //#define DIR_VAL PORTAbits.RA3
-#define DIR_VAL 1
-
-
-#define PWM_freq  10000 //wheel motor PWM frquency in Hz
-#define PIC_freq 20000000
-#define PIC_freq_kHz 20000
-#define ns_per_tick 50 //nano-sec per tick for the PBC = 1/PIC_freq
-#define prescalar_T2 2 //for PWM for the 2 motors
-#define DUTY_CYCLE 60
-
+#define DIR_VAL 0
 /*---------------------------- Module Functions ---------------------------*/
 //static void SetMotorDirection(bool direction);
 
-static void ConfigPWM_OC2() {
-
-    // map OC2 to RA1
-    RPA1R = 0b0101;
-
-    //Clear OC2CON register: 
-    OC2CON = 0;
-
-    // Configure the Output Compare module for one of two PWM operation modes
-    OC2CONbits.ON = 0;         // Turn off Output Compare module
-    OC2CONbits.OCM = 0b110;    // PWM mode without fault pin
-    OC2CONbits.OCTSEL = 0;     // Use Timer2 as the time base
-
-    // Set the PWM duty cycle by writing to the OCxRS register
-    OC2RS = PR2 * 0;       // Secondary Compare Register (for duty cycle)
-    OC2R = PR2 * 0;        // Primary Compare Register (initial value)
-    //OC2R = (PR2 + 1) * 60 / 100;
-    //OC2RS = (PR2 + 1) * 60 / 100;
-
-    // Turn on Timer 2 after OC2 setup
-//    T2CONbits.ON = 1;
-    // Turn ON the Output Compare module
-    OC2CONbits.ON = 1;         // Enable Output Compare module
-
-    return;
-}
 
 /*------------------------------ Module Code ------------------------------*/
 
@@ -83,30 +40,18 @@ bool InitDCMotorService(uint8_t Priority)
 
     // Initialize motor control pins as digital outputs
     TRISAbits.TRISA0 = 0; // RA0 as output
-    TRISAbits.TRISA2 = 0; // RA1 as output
-    TRISAbits.TRISA3 = 1; // RA3 as input
+    TRISAbits.TRISA1 = 0; // RA1 as output
+
     
     ANSELAbits.ANSA0 = 0; // Disable analog on RA0
-
+    ANSELAbits.ANSA1 = 0; // Disable analog on RA0
     // Post the initial ES_INIT event
     ES_Event_t ThisEvent;
     ThisEvent.EventType = ES_INIT;
-    
    
-    ConfigPWM_OC2();
- 
+    DC_1 = 0;
+    DC_2 = 0;
 
-    Direction = (DIR_VAL == 1) ? CW : CCW;
-
-    if (DIR_VAL == 1){
-
-      OC2RS = (PR2 + 1) * DUTY_CYCLE / 100;
-      LATAbits.LATA0 = 0;
-      
-    } else {
-      LATAbits.LATA0 = 1;
-      OC2RS = (PR2 + 1) * (100-DUTY_CYCLE) / 100;
-    } 
     return ES_PostToService(MyPriority, ThisEvent);
 }
 
@@ -142,25 +87,18 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
 
     switch (ThisEvent.EventType)
     {
-    case ES_INIT:
-        // Initialize step timer for motor control
-        
-        ES_Timer_InitTimer(DC_MOTOR_TIMER, interval);
-        DB_printf("curent OC1RS %d\n", OC1RS);
-        
+    case ES_LINEAR_ACTUATOR_BWD:
+        DC_1 = 1;
+        DC_2 = 0;
         break;
-
-    
-    case ES_NEW_KEY:
-        DB_printf('direction reversed!!!');
-        if (ThisEvent.EventParam == 'r'){
-            DB_printf('direction reversed!!!');
-            MotorDirection1 ^= 1;
-            MotorDirection2 ^= 1;
-        }
-    break;
-
-
+    case ES_LINEAR_ACTUATOR_FWD:
+        DC_1 = 0;
+        DC_2 = 1;
+        break;
+    case ES_LINEAR_ACTUATOR_STOP:
+        DC_1 = 0;
+        DC_2 = 0;
+        break;
     default:
         break;
     }

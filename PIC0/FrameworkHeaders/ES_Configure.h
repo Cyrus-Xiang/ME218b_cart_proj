@@ -33,7 +33,7 @@
 /****************************************************************************/
 // This macro determines that nuber of services that are *actually* used in
 // a particular application. It will vary in value from 1 to MAX_NUM_SERVICES
-#define NUM_SERVICES 10
+#define NUM_SERVICES 11
 
 /****************************************************************************/
 // These are the definitions for Service 0, the lowest priority service.
@@ -174,13 +174,25 @@
 
 /****************************************************************************/
 // These are the definitions for Service 10
+//#if NUM_SERVICES > 10
+//// the header file with the public function prototypes
+//#define SERV_10_HEADER "SimpleHSM.h"
+//// the name of the Init function
+//#define SERV_10_INIT InitSimpleHSM
+//// the name of the run function
+//#define SERV_10_RUN RunSimpleHSM
+//// How big should this services Queue be?
+//#define SERV_10_QUEUE_SIZE 3
+//#endif
+
+
 #if NUM_SERVICES > 10
 // the header file with the public function prototypes
-#define SERV_10_HEADER "SimpleHSM.h"
+#define SERV_10_HEADER "DCService.h"
 // the name of the Init function
-#define SERV_10_INIT InitSimpleHSM
+#define SERV_10_INIT InitDCMotorService
 // the name of the run function
-#define SERV_10_RUN RunSimpleHSM
+#define SERV_10_RUN RunDCMotorService
 // How big should this services Queue be?
 #define SERV_10_QUEUE_SIZE 3
 #endif
@@ -310,6 +322,9 @@ typedef enum
   ES_BEACON_FOUND,//has to be sent to PIC1
   ES_SPI_PIC1_UNLOADING_CUBE_S,//as a result of query status of PIC1
   ES_SELF_TRANSITION, //dummy event for triggering the enter state function
+  ES_LINEAR_ACTUATOR_FWD,
+  ES_LINEAR_ACTUATOR_BWD,
+  ES_LINEAR_ACTUATOR_STOP,
   //events defned by Li
     ES_NEW_MOTOR_CMD,
 } ES_EventType_t;

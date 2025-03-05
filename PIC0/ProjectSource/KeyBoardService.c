@@ -132,13 +132,16 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
     switch (ThisEvent.EventParam)
     {
     case 'a':
-
+        Event2Post.EventType = ES_LINEAR_ACTUATOR_BWD;
+        PostDCMotorService(Event2Post);
         break;
     case 'b':
-
+        Event2Post.EventType = ES_LINEAR_ACTUATOR_FWD;
+         PostDCMotorService(Event2Post);
         break;
     case 'c':
-
+        Event2Post.EventType = ES_LINEAR_ACTUATOR_STOP;
+         PostDCMotorService(Event2Post);
         break;
     case 'd':
 

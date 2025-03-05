@@ -49,9 +49,9 @@ bool InitDCMotorService(uint8_t Priority)
     ES_Event_t ThisEvent;
     ThisEvent.EventType = ES_INIT;
    
-    DC_1 = 0;
+    DC_1 = 1;
     DC_2 = 0;
-
+    ES_Timer_InitTimer(LINEAR_ACT_RESET_TIMER, 3000);
     return ES_PostToService(MyPriority, ThisEvent);
 }
 
@@ -87,6 +87,15 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
 
     switch (ThisEvent.EventType)
     {
+    case ES_TIMEOUT:
+        if (ThisEvent.EventParam == LINEAR_ACT_RESET_TIMER)
+            {
+                DC_1 = 0;
+                DC_2 = 0;
+            }
+    
+        
+        break;
     case ES_LINEAR_ACTUATOR_BWD:
         DC_1 = 1;
         DC_2 = 0;

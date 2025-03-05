@@ -381,9 +381,9 @@ typedef enum
 #define TIMER8_RESP_FUNC PostJoint1ServoService
 #define TIMER9_RESP_FUNC PostGameLogicFSM
 #define TIMER10_RESP_FUNC PostGameLogicFSM
-#define TIMER11_RESP_FUNC TIMER_UNUSED
+#define TIMER11_RESP_FUNC PostDCMotorService
 #define TIMER12_RESP_FUNC PostStepperService
-#define TIMER13_RESP_FUNC TIMER_UNUSED
+#define TIMER13_RESP_FUNC PostGameLogicFSM
 #define TIMER14_RESP_FUNC PostSPIMasterService
 #define TIMER15_RESP_FUNC PostTestHarnessService0
 
@@ -396,7 +396,9 @@ typedef enum
 
 #define SERVICE0_TIMER 15
 #define SPI_QUERY_TIMER 14
+#define LINEAR_ACT_RESET_TIMER 11
 #define Stepper_TIMER 12
+#define LINEAR_ACT_TIMER 13
 #define JOINT1_SERVO_TIMER 8
 #define JOINT2_SERVO_TIMER 7
 #define GameTotalTime_TIMER 9

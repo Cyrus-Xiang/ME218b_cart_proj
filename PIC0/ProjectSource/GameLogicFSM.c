@@ -48,6 +48,7 @@ static void enter_UnloadingCrate(void);
 #define InGameLED_LAT LATBbits.LATB3
 #define GameTotalAllowedTime 46000
 #define LinearStageSteps_unload 300 //we assume that it takes 300 steps to unload a crate
+#define LinearAcutator_TIME 1000
 static GameLogicState_t CurrentState;
 static uint8_t TimeExpireCounter = 0;
 // with the introduction of Gen2, we need a module level Priority var as well
@@ -155,7 +156,12 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
       exitGame();
     }
 
+  }else if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == LINEAR_ACT_TIMER)
+  {
+    ES_Event_t Event2Post = {ES_LINEAR_ACTUATOR_STOP, 0};
+    PostDCMotorService(Event2Post);
   }
+  
   
   switch (CurrentState)
   {
@@ -169,7 +175,10 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
         DB_printf("transition from P_init_game_s to Wait4PIC1_Game_s\n");
         ES_Event_t Event2Post = {ES_GAME_START_BUTTON_PRESSED, STATE_START_BUTTON_PRESSED};
         PostSPIMasterService(Event2Post); // tell PIC1 that game has started
-
+        Event2Post.EventType = ES_LINEAR_ACTUATOR_FWD;
+        PostDCMotorService(Event2Post);
+        DB_printf("commanding linear actuator \n");
+        ES_Timer_InitTimer(LINEAR_ACT_TIMER,LinearAcutator_TIME);
       }
       
     }

@@ -25,11 +25,12 @@ static uint8_t DutyCycle;
 // 50 , 1
 
 #define PIC_FREQ 20000000 // PIC 20MHz
-#define PWM_0_DEG 50
-#define PWM_90_DEG 10
+#define PWM_0_DEG 2.9
+#define PWM_90_DEG 8
+#define PWM_10_DEG 13
 #define JOINT1_TIME_STEP 50
 //for configuring timer 2
-#define PWM_freq 400 // wheel motor PWM frquency in Hz
+#define PWM_freq 50 // wheel motor PWM frquency in Hz
 #define PIC_freq 20000000
 #define PIC_freq_kHz 20000
 #define ns_per_tick 50 // nano-sec per tick for the PBC = 1/PIC_freq

@@ -17,25 +17,16 @@
 /*---------------------------- Module Variables ---------------------------*/
 // with the introduction of Gen2, we need a module level Priority variable
 static uint8_t MyPriority;
-volatile static uint16_t NumRollover;
 
 #define ONE_SEC 1000
 #define HALF_SEC (ONE_SEC / 2)
 #define QUATER_SEC (HALF_SEC / 2)
 
-//#define GAME_TIME 60 * ONE_SEC
 
-//#define PWM_OUTPUT LATBbits.LATB9
-
-
-static uint16_t maxPulseTicks = 6250; // +90
-static uint16_t minPulseTicks = 1250; // -90
-static uint8_t maxStep = 60*1000 / QUATER_SEC ;
 
 static uint8_t DutyCycle;
 // 50 , 1
-#define CHANNEL4_PWM_FREQUENCY 50
-#define TIMER3_PRESCALE 64
+
 #define PIC_FREQ 20000000 // PIC 20MHz
 // 9.5 for 180 degrees, 2 for 0 degree
 #define PWM_0_DEG 2
@@ -44,24 +35,14 @@ static uint8_t DutyCycle;
 static float currentPWM;
 static bool increasing = false;
 
-static void ConfigPWM_OC3() {
-    RPA3R = 0b0101;
-    OC3CON = 0;
-    OC3CONbits.ON = 0;
-    OC3CONbits.OCM = 0b110;
-    OC3CONbits.OCTSEL = 1;
-    OC3RS = PR3 * 0;
-    OC3R = PR3 * 0;
-    OC3CONbits.ON = 1;
-    return;
-}
+static void ConfigPWM_OC3();
 
 bool InitJoint2ServoService(uint8_t Priority)
 {
     ES_Event_t ThisEvent;
 
     MyPriority = Priority;
-    puts("\rStarting ServoService2!!\r");
+    puts("joint2 servo service is being initialized\r");
     TRISAbits.TRISA3 = 0; // set RA3 as PMW output pin
     ConfigPWM_OC3();
     DutyCycle = PWM_0_DEG;
@@ -71,7 +52,7 @@ bool InitJoint2ServoService(uint8_t Priority)
     //DB_printf("Initializing at 0 degrees (PWM: %f)\n", PWM_0_DEG);
     
     ThisEvent.EventType = ES_INIT;
-    //currentPWM = PWM_0_DEG;
+   
     if (ES_PostToService(MyPriority, ThisEvent) == true)
     {
         return true;
@@ -161,3 +142,14 @@ ES_Event_t RunJoint2ServoService(ES_Event_t ThisEvent)
     return ReturnEvent;
 }
 
+static void ConfigPWM_OC3() {
+    RPA3R = 0b0101;
+    OC3CON = 0;
+    OC3CONbits.ON = 0;
+    OC3CONbits.OCM = 0b110;
+    OC3CONbits.OCTSEL = 1;//uses Timer3
+    OC3RS = PR3 * 0;
+    OC3R = PR3 * 0;
+    OC3CONbits.ON = 1;
+    return;
+}

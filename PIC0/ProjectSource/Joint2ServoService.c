@@ -161,5 +161,3 @@ ES_Event_t RunJoint2ServoService(ES_Event_t ThisEvent)
     return ReturnEvent;
 }
 
-
-

@@ -88,7 +88,6 @@ bool InitServoService(uint8_t Priority)
     puts("\rStarting ServoService\r");
 
     TRISBbits.TRISB13 = 0; // set RB13 as PMW output pin
-    ConfigTimer3();
     ConfigPWM_OC4();
     //PR3 = 399999;
     DutyCycle = INIT_PWM;

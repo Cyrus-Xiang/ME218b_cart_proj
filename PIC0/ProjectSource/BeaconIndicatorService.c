@@ -143,7 +143,7 @@ void ConfigTimer3() {
 void Config_IC1() {
     IC1CONbits.ON = 0;
     IC1CONbits.C32 = 0;
-    IC1CONbits.ICTMR = 0;
+    IC1CONbits.ICTMR = 0; // Use Timer3
     IC1CONbits.ICI = 0b00;
     IC1CONbits.ICM = 0b011;
 

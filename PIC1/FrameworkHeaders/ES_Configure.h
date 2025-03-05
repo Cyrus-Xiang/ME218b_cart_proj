@@ -304,6 +304,7 @@ typedef enum
   ES_BEACON_FOUND,
   ES_GAME_START_BUTTON_PRESSED,
   ES_MOTOR_BABY_STEP,
+  ES_HALL_SENSOR_TRIGGERED,
   //for spi stuff
   ES_DATA_RECEIVED,
   ES_NEW_PIC0_CMD,
@@ -343,7 +344,7 @@ typedef enum
 
 /****************************************************************************/
 // This is the list of event checking functions
-#define EVENT_CHECK_LIST Check4Keystroke, Check4IntersectionIR
+#define EVENT_CHECK_LIST Check4Keystroke, Check4IntersectionIR, Check4HallSensor
 
 /****************************************************************************/
 // These are the definitions for the post functions to be executed when the

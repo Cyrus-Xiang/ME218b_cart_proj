@@ -149,3 +149,14 @@ bool Check4IntersectionIR(void){
   lastLeftIR_state = leftIR_state;
   return ReturnVal;
 }
+bool Check4HallSensor(void){
+  if (PORTBbits.RB11)
+  {
+    ES_Event_t ThisEvent = {ES_HALL_SENSOR_TRIGGERED, 0};
+    PostGameLogicFSM(ThisEvent);
+    DB_printf("Hall sensor detected in eventcheker and event posted\n\r");
+    return true;
+  }
+  
+  return false;
+}

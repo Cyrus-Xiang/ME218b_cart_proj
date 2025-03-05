@@ -23,5 +23,6 @@
 
 bool Check4Keystroke(void);
 bool Check4IntersectionIR(void);
+bool Check4HallSensor(void);
 
 #endif /* EventCheckers_H */

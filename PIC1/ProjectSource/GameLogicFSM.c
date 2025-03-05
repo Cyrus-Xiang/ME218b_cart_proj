@@ -81,6 +81,8 @@ bool InitGameLogicFSM(uint8_t Priority)
   MyPriority = Priority;
   // put us into the Initial PseudoState
   CurrentState = P_Init_Game_s;
+  //set TRIS and LATS
+  TRISBbits.TRISB11 = 1; //set B11 as input
   //ES_Timer_InitTimer(IdleSetup_TIMER, IdleTimeAtSetup);
   ES_Timer_InitTimer(GameLogicTest_TIMER,IdleTimeAtSetup+800);
   // post the initial transition event

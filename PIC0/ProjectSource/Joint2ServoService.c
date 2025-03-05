@@ -85,7 +85,7 @@ ES_Event_t RunJoint2ServoService(ES_Event_t ThisEvent)
         DB_printf("[INIT] Servo at 180 degrees (PWM: %d)\n", (int)(currentPWM * 100));
         break;
     
-    case ES_ROTATE_ZERO:
+    case ES_ROTATE_ZERO_Joint2:
         DB_printf("Recevie ES_ROTATE_ZERO");
         if (currentPWM == PWM_0_DEG) {
             DB_printf("[EVENT] Already at 0 degrees, no action needed.\n");
@@ -96,7 +96,7 @@ ES_Event_t RunJoint2ServoService(ES_Event_t ThisEvent)
         }
         break;
     
-    case ES_ROTATE_180:
+    case ES_ROTATE_180_Joint2:
         DB_printf("Recevie ES_ROTATE_180");
         if (currentPWM == PWM_180_DEG) {
             DB_printf("[EVENT] Already at 180 degrees, no action needed.\n");
@@ -106,7 +106,8 @@ ES_Event_t RunJoint2ServoService(ES_Event_t ThisEvent)
             ES_Timer_InitTimer(JOINT2_SERVO_TIMER, JOINT2_TIME_STEP);
         }
         break;
-    
+    case ES_ROTATE_90_Joint2:
+        break;
     case ES_TIMEOUT:
         if (increasing) {
             if (currentPWM < PWM_180_DEG) {

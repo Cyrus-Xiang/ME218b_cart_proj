@@ -220,7 +220,7 @@ ES_Event_t RunStepperService(ES_Event_t ThisEvent)
     }
   break;
 
-  case ES_STEPPER_FWD:
+  case ES_STEPPER_BWD:
     //stepInd = 0;
     Dir = 0;
     stepsCommanded = ThisEvent.EventParam;
@@ -228,7 +228,7 @@ ES_Event_t RunStepperService(ES_Event_t ThisEvent)
     ES_Timer_InitTimer(Stepper_TIMER, StepInterval);
     DB_printf("steps commanded is %d\n", stepsCommanded);
     break;
-  case ES_STEPPER_BWD:
+  case ES_STEPPER_FWD:
     //stepInd = 0;
     Dir = 1;
     stepsCommanded = ThisEvent.EventParam;

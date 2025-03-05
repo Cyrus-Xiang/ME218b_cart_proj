@@ -93,18 +93,19 @@ ES_Event_t RunJoint1ServoService(ES_Event_t ThisEvent)
 //        ES_Timer_InitTimer(JOINT1_SERVO_TIMER, JOINT1_TIME_STEP);
     break;
     
-    case ES_ROTATE_ZERO:
+    case ES_ROTATE_ZERO_Joint1:
         // Start at PWM_0_DEG
         currentPWM = PWM_0_DEG;
         decreasing = false;
         ES_Timer_InitTimer(JOINT1_SERVO_TIMER, JOINT1_TIME_STEP);
         break;
     
-    case ES_ROTATE_90:
+    case ES_ROTATE_90_Joint1:
         decreasing = true;
         ES_Timer_InitTimer(JOINT1_SERVO_TIMER, JOINT1_TIME_STEP);
         break;
-    
+    case ES_ROTATE_180_Joint1:
+        break;
     case ES_TIMEOUT:
         if (decreasing) {
             if (currentPWM > PWM_90_DEG) {

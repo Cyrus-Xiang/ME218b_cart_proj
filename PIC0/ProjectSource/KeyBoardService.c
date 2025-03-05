@@ -218,25 +218,33 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
         break;
     case '0':
         Event2Post.EventType = ES_STEPPER_FWD;
-        Event2Post.EventParam = 100;
+        Event2Post.EventParam = 500;
         PostStepperService(Event2Post);
         break;
     case '1':
         Event2Post.EventType = ES_STEPPER_BWD;
-        Event2Post.EventParam = 100;
+        Event2Post.EventParam = 500;
         PostStepperService(Event2Post);
         break;
     case '2':
-
+        Event2Post.EventType = ES_ROTATE_90_Joint1;
+        PostJoint1ServoService(Event2Post);
+        DB_printf("keyboard posted rotate 90 request to servo service \n");
         break;
     case '3':
-
+        Event2Post.EventType = ES_ROTATE_ZERO_Joint1;
+        PostJoint1ServoService(Event2Post);
+        DB_printf("keyboard posted rotate 0 request to servo service \n");
         break;
     case '4':
-
+        Event2Post.EventType = ES_ROTATE_180_Joint2;
+        PostJoint2ServoService(Event2Post);
+        DB_printf("keyboard posted rotate 180 request to servo service \n");
         break;
     case '5':
-
+        Event2Post.EventType = ES_ROTATE_ZERO_Joint2;
+        PostJoint2ServoService(Event2Post);
+        DB_printf("keyboard posted rotate 0 request to servo service \n");
         break;
     case '6':
 

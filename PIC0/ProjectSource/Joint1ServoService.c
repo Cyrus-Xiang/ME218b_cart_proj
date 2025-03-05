@@ -15,48 +15,22 @@
 /*---------------------------- Module Variables ---------------------------*/
 // with the introduction of Gen2, we need a module level Priority variable
 static uint8_t MyPriority;
-volatile static uint16_t NumRollover;
 
 #define ONE_SEC 1000
 #define HALF_SEC (ONE_SEC / 2)
 #define QUATER_SEC (HALF_SEC / 2)
 
-
-static uint16_t maxPulseTicks = 6250; // +90
-static uint16_t minPulseTicks = 1250; // -90
-
-static uint8_t maxStep = 60*1000 / QUATER_SEC ;
-
-//static Beacon_t DetectedBeacon;
 static uint8_t DutyCycle;
 
 // 50 , 1
-#define CHANNEL4_PWM_FREQUENCY 50
-#define TIMER3_PRESCALE 64
+
 #define PIC_FREQ 20000000 // PIC 20MHz
 #define PWM_0_DEG 7
 #define PWM_90_DEG 3.2
 #define JOINT1_TIME_STEP 50
 
+static void ConfigPWM_OC1() ;
 
-static void ConfigPWM_OC1() {
-
-//     map OC2 to RB13
-    RPB15R = 0b0101;
-    //Clear OC2CON register: 
-    OC1CON = 0;
-    // Configure the Output Compare module for one of two PWM operation modes
-    OC1CONbits.ON = 0;         // Turn off Output Compare module
-    OC1CONbits.OCM = 0b110;    // PWM mode without fault pin
-    OC1CONbits.OCTSEL = 1;     // Use Timer3 as the time base
-
-    // Set the PWM duty cycle by writing to the OCxRS register
-    OC1RS = PR3 * 0;       // Secondary Compare Register (for duty cycle)
-    OC1R = PR3 * 0;        // Primary Compare Register (initial value)
-    OC1CONbits.ON = 1;         // Enable Output Compare module
-    
-    return;
-}
 
 
 
@@ -152,4 +126,22 @@ ES_Event_t RunJoint1ServoService(ES_Event_t ThisEvent)
         break;
     }
     return ReturnEvent;
+}
+static void ConfigPWM_OC1() {
+
+//     OC1 to B15
+    RPB15R = 0b0101;
+    //Clear OC2CON register: 
+    OC1CON = 0;
+    // Configure the Output Compare module for one of two PWM operation modes
+    OC1CONbits.ON = 0;         // Turn off Output Compare module
+    OC1CONbits.OCM = 0b110;    // PWM mode without fault pin
+    OC1CONbits.OCTSEL = 1;     // Use Timer3 as the time base
+
+    // Set the PWM duty cycle by writing to the OCxRS register
+    OC1RS = PR3 * 0;       // Secondary Compare Register (for duty cycle)
+    OC1R = PR3 * 0;        // Primary Compare Register (initial value)
+    OC1CONbits.ON = 1;         // Enable Output Compare module
+    
+    return;
 }

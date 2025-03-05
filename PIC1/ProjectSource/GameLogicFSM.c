@@ -290,7 +290,11 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
         DB_printf("taking a baby step\n");
         ES_Event_t Event2Post = {ES_MOTOR_BABY_STEP, 0};
         PostMotorService(Event2Post);
+      }else if (ThisEvent.EventType==ES_MOTOR_MISSION_COMPLETE)
+      {
+        /* code */
       }
+      
       
     }
     break;

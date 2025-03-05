@@ -6,7 +6,10 @@ build/default/debug/ProjectSource/KeyboardService.o: \
  FrameworkHeaders/ES_Events.h FrameworkHeaders/ES_Configure.h \
  FrameworkHeaders/ES_PostList.h FrameworkHeaders/ES_General.h \
  FrameworkHeaders/ES_Timers.h ProjectHeaders/KeyboardService.h \
- FrameworkHeaders/dbprintf.h
+ FrameworkHeaders/dbprintf.h ProjectHeaders/ServoService.h \
+ ProjectHeaders/SPIMasterService.h FrameworkHeaders/ES_Events.h \
+ FrameworkHeaders/ES_Port.h ProjectHeaders/GameLogicFSM.h \
+ FrameworkHeaders/ES_Types.h
 
 FrameworkHeaders/ES_Configure.h:
 
@@ -35,3 +38,15 @@ FrameworkHeaders/ES_Timers.h:
 ProjectHeaders/KeyboardService.h:
 
 FrameworkHeaders/dbprintf.h:
+
+ProjectHeaders/ServoService.h:
+
+ProjectHeaders/SPIMasterService.h:
+
+FrameworkHeaders/ES_Events.h:
+
+FrameworkHeaders/ES_Port.h:
+
+ProjectHeaders/GameLogicFSM.h:
+
+FrameworkHeaders/ES_Types.h:

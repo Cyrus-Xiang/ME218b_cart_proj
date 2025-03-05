@@ -51,7 +51,7 @@ static void enter_UnloadingCrate(void);
 static GameLogicState_t CurrentState;
 static uint8_t TimeExpireCounter = 0;
 // with the introduction of Gen2, we need a module level Priority var as well
-static bool RotateDir = 0; //0 means CCW and 1 means CW
+
 static uint8_t MyPriority;
 
 /*------------------------------ Module Code ------------------------------*/

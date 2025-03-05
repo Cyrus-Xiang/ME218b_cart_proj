@@ -40,7 +40,7 @@ static uint8_t DutyCycle;
 #define CHANNEL4_PWM_FREQUENCY 50
 #define TIMER3_PRESCALE 64
 #define PIC_FREQ 20000000 // PIC 20MHz
-#define PWM_0_DEG 7
+#define PWM_0_DEG 6
 #define PWM_90_DEG 3.2
 #define JOINT1_TIME_STEP 50
 
@@ -59,6 +59,41 @@ static uint8_t DutyCycle;
 //    T3CONbits.ON = 1;
 //}
 
+
+void ConfigTimer2() {
+    T2CONbits.ON = 0;
+    T2CONbits.TCS = 0;
+    T2CONbits.TCKPS = 0b011;
+    TMR2 = 0;
+    PR2 = 0xFFFF;
+
+    IFS0CLR = _IFS0_T2IF_MASK;
+    IPC2bits.T2IP = 6;
+    IEC0SET = _IEC0_T2IE_MASK;
+    T2CONbits.ON = 1;
+}
+
+
+//static void ConfigPWM_OC1() {
+//
+////     map OC2 to RB13
+//    RPB15R = 0b0101;
+//    //Clear OC2CON register: 
+//    OC1CON = 0;
+//    // Configure the Output Compare module for one of two PWM operation modes
+//    OC1CONbits.ON = 0;         // Turn off Output Compare module
+//    OC1CONbits.OCM = 0b110;    // PWM mode without fault pin
+//    OC1CONbits.OCTSEL = 1;     // Use Timer3 as the time base
+//
+//    // Set the PWM duty cycle by writing to the OCxRS register
+//    OC1RS = PR3 * 0;       // Secondary Compare Register (for duty cycle)
+//    OC1R = PR3 * 0;        // Primary Compare Register (initial value)
+//    OC1CONbits.ON = 1;         // Enable Output Compare module
+//    
+//    return;
+//}
+
+
 static void ConfigPWM_OC1() {
 
 //     map OC2 to RB13
@@ -68,11 +103,11 @@ static void ConfigPWM_OC1() {
     // Configure the Output Compare module for one of two PWM operation modes
     OC1CONbits.ON = 0;         // Turn off Output Compare module
     OC1CONbits.OCM = 0b110;    // PWM mode without fault pin
-    OC1CONbits.OCTSEL = 1;     // Use Timer3 as the time base
+    OC1CONbits.OCTSEL = 0;     // Use Timer3 as the time base
 
     // Set the PWM duty cycle by writing to the OCxRS register
-    OC1RS = PR3 * 0;       // Secondary Compare Register (for duty cycle)
-    OC1R = PR3 * 0;        // Primary Compare Register (initial value)
+    OC1RS = PR2 * 0;       // Secondary Compare Register (for duty cycle)
+    OC1R = PR2 * 0;        // Primary Compare Register (initial value)
     OC1CONbits.ON = 1;         // Enable Output Compare module
     
     return;
@@ -85,7 +120,7 @@ bool InitJoint1ServoService(uint8_t Priority)
     ES_Event_t ThisEvent;
 
     MyPriority = Priority;
-
+    ConfigTimer2();
     // When doing testing, it is useful to announce just which program
     // is running.
     puts("\rStarting ServoService\r");
@@ -126,7 +161,7 @@ ES_Event_t RunJoint1ServoService(ES_Event_t ThisEvent)
     case ES_INIT:
 //        // Start at PWM_0_DEG
         currentPWM = PWM_0_DEG;
-        OC1RS = (float)(PR3 + 1) * currentPWM / 100;
+        OC1RS = (float)(PR2 + 1) * currentPWM / 100;
         DB_printf("Starting PWM at %f\n", currentPWM);
 //        // Post a timeout event to start advancing
 //        ES_Timer_InitTimer(JOINT1_SERVO_TIMER, JOINT1_TIME_STEP);

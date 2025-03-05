@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "tapefsm.h": "c"
+        "tapefsm.h": "c",
+        "beaconindicatorservice.h": "c"
     }
 }

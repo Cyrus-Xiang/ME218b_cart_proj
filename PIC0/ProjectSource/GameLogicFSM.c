@@ -46,7 +46,7 @@ static void enter_UnloadingCrate(void);
 #define ActionTimeAllowed 2000
 #define IdleTimeAtSetup 1000
 #define InGameLED_LAT LATBbits.LATB3
-#define GameTotalAllowedTime 10000
+#define GameTotalAllowedTime 218000
 #define LinearStageSteps_unload 300 //we assume that it takes 300 steps to unload a crate
 static GameLogicState_t CurrentState;
 

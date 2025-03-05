@@ -125,9 +125,9 @@ ES_Event_t RunServoService(ES_Event_t ThisEvent)
     case ES_SIDE_DETECTED:
         DetectedBeacon =ThisEvent.EventParam;
         if (DetectedBeacon == BEACON_B || DetectedBeacon == BEACON_L){
-            DutyCycle = BLUE_PWM;
-        }else if (DetectedBeacon == BEACON_G || DetectedBeacon == BEACON_R){
             DutyCycle = GREEN_PWM;
+        }else if (DetectedBeacon == BEACON_G || DetectedBeacon == BEACON_R){
+            DutyCycle = BLUE_PWM;
         }
         OC4RS = (float)(PR3 + 1) * DutyCycle / 100;
         DB_printf("ES_SIDE_DETECTED is  %d\n", DetectedBeacon);

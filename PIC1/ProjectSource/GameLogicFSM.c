@@ -42,10 +42,10 @@
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well.
 // type of state variable should match htat of enum in header file
-#define HitWallDetectTime 2000 //after this amount of time, if nothing happens we say that we have hit the wall
+#define HitWallDetectTime 2500 //after this amount of time, if nothing happens we say that we have hit the wall
 #define IdleTimeAtSetup 3000
 #define RotateGuranteeTime 1000 //for the time between we send out rotate command and find tape command in aligning to stack state
-#define TapeFollowGuranteeTime 2000 //time that is guranteed for tape following to be executed 
+#define TapeFollowGuranteeTime 1500 //time that is guranteed for tape following to be executed 
 #define tape_follow_speed 65 // speed for tape following in duty cycle (max=100)
 #define rotate_speed 40 // speed for rotating in duty cycle (max=100)
 
@@ -137,14 +137,14 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
 {
   ES_Event_t ReturnEvent;
   ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
-  if (ThisEvent.EventParam == GameLogicTest_TIMER)
-  {
-    ES_Event_t Event2Post;
-    Event2Post.EventType = ES_GAME_START_BUTTON_PRESSED;
-    PostGameLogicFSM(Event2Post);
-    Event2Post.EventType = ES_BEACON_FOUND;
-    PostGameLogicFSM(Event2Post);
-  }
+  // if (ThisEvent.EventParam == GameLogicTest_TIMER)
+  // {
+  //   ES_Event_t Event2Post;
+  //   Event2Post.EventType = ES_GAME_START_BUTTON_PRESSED;
+  //   PostGameLogicFSM(Event2Post);
+  //   Event2Post.EventType = ES_BEACON_FOUND;
+  //   PostGameLogicFSM(Event2Post);
+  // }
   
   switch (CurrentState)
   {

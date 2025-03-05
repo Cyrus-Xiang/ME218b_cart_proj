@@ -41,7 +41,7 @@
 #define FREQ_G 3333
 #define FREQ_L 2000
 #define FREQ_B 1427
-#define FREQ_R 2000
+#define FREQ_R 909
 
 // Side Detection Colors
 Beacon_t DetectedBeacon;

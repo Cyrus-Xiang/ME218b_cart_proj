@@ -161,7 +161,7 @@ ES_Event_t RunMotorService(ES_Event_t ThisEvent)
     H_bridge1A_LAT = 1;
     H_bridge3A_LAT = 1;
     OC4RS = (float)PR2 * 50 /100;
-    OC3RS = (float)PR2 * 60 /100;
+    OC3RS = (float)PR2 * 56 /100;
     ES_Timer_InitTimer(Motor_Turning_TIMER, 500);
     break;
   case ES_MOTOR_FWD:

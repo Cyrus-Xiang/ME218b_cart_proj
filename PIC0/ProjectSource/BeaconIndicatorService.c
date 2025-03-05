@@ -31,9 +31,7 @@
 
 #define ONE_SEC 1000
 #define ELEC_TIME_CONS 148 // in microsec
-#define PWM_FREQ 6756 // Set PWM freq at least 1/tao
 #define PIC_FREQ 20000000 // PIC 20MHz
-#define TIMER2_PRESCALE 1 // Assume 1:1 prescale value
 #define TICK_FREQ (PIC_FREQ / 8) // Timer3 Prescale 1:8
 
 // Alignment Constants
@@ -66,21 +64,10 @@ uint8_t FreqTolerance = 30;
 /*------------------------------ Module Code ------------------------------*/
 
 bool InitBeaconIndicatorService(uint8_t Priority) {
-    clrScrn();
     puts("\rStarting Beacon Indicator Service\r");
-    
-
     // Configure Timer3 & Input Capture (IC3)
     ConfigTimer3();
     Config_IC1();
-
-    // Initialize Motor Pin state
-    LATBbits.LATB2 = 0;
-    LATBbits.LATB9 = 0;
-
-    // Set RB11 as input for encoder, mapped to IC3
-    TRISBbits.TRISB11 = 1;
-    IC2R = 0b0000; //Map IC2 to RA3
 
     MyPriority = Priority;
     
@@ -96,27 +83,9 @@ bool PostBeaconIndicatorService(ES_Event_t ThisEvent) {
 ES_Event_t RunBeaconIndicatorService(ES_Event_t ThisEvent) {
     ES_Event_t ReturnEvent = {ES_NO_EVENT, 0}; 
 
-    uint8_t dutyCycle = 100;
 
     switch (ThisEvent.EventType) {
-        // case ES_REQUEST_SIDE_DETECTION:
-        //     DB_printf("\r Receive Side detection request: Start Aligning\r\n");
-        //     ES_Timer_InitTimer(BEACON_ALIGN_TIMER, ALIGNMENT_TIMEOUT);
-        //     break;
-        // case ES_TIMEOUT:
-        //     if (ThisEvent.EventParam == BEACON_ALIGN_TIMER) {
-        //         if (aligned){
-        //             DB_printf("Aligned succeed,R\n");
-        //             DB_printf("Detected Frequency: %d\n", detectedFreq);
-        //             ES_Event_t Event2Post = {ES_SIDE_DETECTED, DetectedBeacon};
-        //             PostGameLogicFSM(Event2Post);
-        //         }else{
-        //           DB_printf("Aligned failed, stopping motor.. R\n"); 
-        //           ES_Event_t Event2Post = {ES_SIDE_DETECTED, BEACON_UNKNOWN};
-        //           PostGameLogicFSM(Event2Post);
-        //         }
-        //     }
-        //     break;
+
 
         default:
             break;

@@ -42,7 +42,8 @@
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well.
 // type of state variable should match htat of enum in header file
-#define HitWallDetectTime 6000 //after this amount of time, if nothing happens we say that we have hit the wall
+//#define HitWallDetectTime 6000 //after this amount of time, if nothing happens we say that we have hit the wall
+#define HitWallDetectTime 10000
 #define IdleTimeAtSetup 3000
 #define RotateGuranteeTime 1000 //for the time between we send out rotate command and find tape command in aligning to stack state
 #define TapeFollowGuranteeTime 800 //time that is guranteed for tape following to be executed 
@@ -160,10 +161,10 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
         DB_printf("GameLogicFSM: Transition to Setup_Game_s\n");
         ES_Timer_InitTimer(ActionAllowedTime_TIMER, HitWallDetectTime);
         ES_Event_t Event2Post;
-        Event2Post.EventType = ES_MOTOR_CW_CONTINUOUS;
+        Event2Post.EventType = ES_MOTOR_CCW_CONTINUOUS;
         Event2Post.EventParam = rotate_speed;
         PostMotorService(Event2Post);
-        DB_printf("motor service posted, turning cw\n");
+        DB_printf("motor service posted, turning ccw\n");
         ES_Timer_InitTimer(ActionAllowedTime_TIMER, HitWallDetectTime);
         DB_printf("action allowed timer started with %d ms\n", HitWallDetectTime);
       }
@@ -174,10 +175,10 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
       if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == ActionAllowedTime_TIMER)
       {
         ES_Event_t Event2Post;
-        Event2Post.EventType = ES_MOTOR_CCW_CONTINUOUS;
+        Event2Post.EventType = ES_MOTOR_CW_CONTINUOUS;
         Event2Post.EventParam = rotate_speed;
         PostMotorService(Event2Post);
-        DB_printf("motor service posted, turning ccw\n");
+        DB_printf("hit the wall detected, motor service posted, turning ccw\n");
       }else if (ThisEvent.EventType == ES_BEACON_FOUND) 
       {
         CurrentState = FindTape_Game_s;
@@ -187,12 +188,13 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
         Event2Post.EventType = ES_TAPE_LookForTape;
         PostTapeFSM(Event2Post);
         DB_printf("tape service posted, looking for tape\n");
-        Event2Post.EventType = ES_MOTOR_CW_CONTINUOUS;
+        Event2Post.EventType = ES_MOTOR_CCW_CONTINUOUS;
         Event2Post.EventParam = rotate_speed;
         PostMotorService(Event2Post);
         DB_printf("motor service posted, turning cw\n");
         //start the timer again for detecting hitting the wall and this time we look for tape instead of beacon
-        ES_Timer_InitTimer(ActionAllowedTime_TIMER, HitWallDetectTime);
+        //ES_Timer_InitTimer(ActionAllowedTime_TIMER, HitWallDetectTime);
+        //cart is on the left of the tape for sure so no need for this timer
       }
     }
     break;

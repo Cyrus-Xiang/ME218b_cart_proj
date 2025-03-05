@@ -33,7 +33,7 @@
 /****************************************************************************/
 // This macro determines that nuber of services that are *actually* used in
 // a particular application. It will vary in value from 1 to MAX_NUM_SERVICES
-#define NUM_SERVICES 8
+#define NUM_SERVICES 7
 
 /****************************************************************************/
 // These are the definitions for Service 0, the lowest priority service.
@@ -96,11 +96,11 @@
 // These are the definitions for Service 4
 #if NUM_SERVICES > 4
 // the header file with the public function prototypes
-#define SERV_4_HEADER "KeyboardService.h"
+#define SERV_4_HEADER "DataReceiverService.h"
 // the name of the Init function
-#define SERV_4_INIT InitKeyboardService
+#define SERV_4_INIT InitDataReceiverService
 // the name of the run function
-#define SERV_4_RUN RunKeyboardService
+#define SERV_4_RUN RunDataReceiverService
 // How big should this services Queue be?
 #define SERV_4_QUEUE_SIZE 3
 #endif
@@ -135,11 +135,11 @@
 // These are the definitions for Service 7
 #if NUM_SERVICES > 7
 // the header file with the public function prototypes
-#define SERV_7_HEADER "DataReceiverService.h"
+#define SERV_7_HEADER "KeyboardService.h"
 // the name of the Init function
-#define SERV_7_INIT InitDataReceiverService
+#define SERV_7_INIT InitKeyboardService
 // the name of the run function
-#define SERV_7_RUN RunDataReceiverService
+#define SERV_7_RUN RunKeyboardService
 // How big should this services Queue be?
 #define SERV_7_QUEUE_SIZE 3
 #endif

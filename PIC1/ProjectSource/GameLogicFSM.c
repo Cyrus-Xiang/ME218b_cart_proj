@@ -303,13 +303,67 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
     break;
     case UnloadingCrate_Game_s:
     {
+        if(ThisEvent.EventType == ES_BEACON_FOUND)
+        {
+            ES_Event_t Event2Post;
+            Event2Post.EventType = ES_MOTOR_FWD;
+            Event2Post.EventParam = 65;
+            CurrentState = PickingUpCrate_Game_s;
+        }
+    }
+    break;
+    case BackingToInterB_Game_s:
+    {
+      if (ThisEvent.EventType == ES_LEFT_INTERSECTION_DETECT || ThisEvent.EventType == ES_RIGHT_INTERSECTION_DETECT)
+      {
+        ES_Timer_InitTimer(ActionAllowedTime_TIMER, RotateGuranteeTime);
+        ES_Event_t Event2Post ={ES_MOTOR_CW_CONTINUOUS, rotate_speed};
+      }
+      else if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == ActionAllowedTime_TIMER)
+      {
+        ES_Event_t Event2Post;
+        Event2Post.EventType = ES_TAPE_LookForTape;
+        PostTapeFSM(Event2Post);
+        DB_printf("rotate action allowed  timer expired \n");
+        DB_printf("tape service posted, looking for tape\n");
+      }else if (ThisEvent.EventType == ES_TAPE_FOUND)
+      {
+        ES_Event_t Event2Post ={ES_MOTOR_STOP, 0};
+        PostMotorService(Event2Post);
+        ES_Event_t Event2Post2 ={ES_TAPE_FOLLOW_REV, tape_follow_speed};
+        CurrentState = OnTheWayB2C_Game_s;
+        ES_Timer_InitTimer(ActionAllowedTime_TIMER, TapeFollowGuranteeTime);
+        
+      }  
+      
+    }
+    case B2CMidRotate_Game_s:{
+      if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == ActionAllowedTime_TIMER)
+      {
+        CurrentState = OnTheWayB2C_Game_s;
+      }
+    }
+    break;
+    case OnTheWayB2C_Game_s:{
+      if (ThisEvent.EventType == ES_LEFT_INTERSECTION_DETECT)
+      {
+        CurrentState = AligningToStack_Game_s;
+        DB_printf("Transition from GoToInterB_Game_s to AligningToStack_Game_s\n");
+        ES_Event_t Event2Post;
+        Event2Post.EventType = ES_TAPE_STOP;
+        PostTapeFSM(Event2Post);
+        DB_printf("tape service posted, stopping\n");
+        Event2Post.EventType = ES_MOTOR_CCW_CONTINUOUS;
+        Event2Post.EventParam = rotate_speed;
+        PostMotorService(Event2Post);
+        DB_printf("motor service posted, turning ccw\n");
+        ES_Timer_InitTimer(ActionAllowedTime_TIMER, RotateGuranteeTime);
+        DB_printf("rotate action allowed timer started with %d ms\n", RotateGuranteeTime);
+      }
+      
 
     }
     break;
-    case PickingUpCrate_Game_s:
-    {
-
-    }
     break;
     default:
     break;

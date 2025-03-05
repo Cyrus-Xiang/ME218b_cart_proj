@@ -130,12 +130,12 @@ bool Check4IntersectionIR(void){
     static bool lastLeftIR_state = false; //defining to read input of shot sensor
     //debounce function, only if the state has changed
     if(rightIR_state != lastRightIR_state || leftIR_state != lastLeftIR_state){
-        // if(leftIR_state){
-        //     ThisEvent.EventType= ES_LEFT_INTERSECTION_DETECT;
-        //     PostGameLogicFSM(ThisEvent);
-        //     ReturnVal = true;
-        //     DB_printf("Left IR detected in eventcheker and event posted\n\r");
-        // }
+        if(leftIR_state){
+            ThisEvent.EventType= ES_LEFT_INTERSECTION_DETECT;
+            PostGameLogicFSM(ThisEvent);
+            ReturnVal = true;
+            DB_printf("Left IR detected in eventcheker and event posted\n\r");
+        }
 
         if (rightIR_state){
             ThisEvent.EventType= ES_RIGHT_INTERSECTION_DETECT;

@@ -266,5 +266,7 @@ static void exitGame(void){
 static void enter_UnloadingCrate(void){
   ES_Event_t Event2Post = {ES_STEPPER_FWD, LinearStageSteps_unload};
   PostStepperService(Event2Post);
+  Event2Post.EventType = ES_BEACON_FOUND;
+  PostSPIMasterService(Event2Post); // tell PIC1 beacon has been detected
   return;
 }

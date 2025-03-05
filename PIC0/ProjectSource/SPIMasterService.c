@@ -242,8 +242,12 @@ void __ISR(_SPI_1_VECTOR, IPL6SOFT) SPIMasterISR(void) {
             DB_printf("[SPI] Received status!!!: %s\r\n", TranslateNavStatusToStr(ReceivedStatus));
             CmdEvent.EventType = ES_NAVIGATOR_STATUS_CHANGE;
             CmdEvent.EventParam = ReceivedStatus;
-            PostSimpleHSM(CmdEvent);
-            PrevNavigatorStatus = ReceivedStatus;
+            if (ReceivedStatus == PIC1_UNLOADING_CRATE){
+                ES_Event_t Event2Post = {ES_SPI_PIC1_UNLOADING_CUBE_S, 0};
+                PostGameLogicFSM(Event2Post);
+                DB_printf("spi service posted ES_SPI_PIC1_UNLOADING_CUBE_S\n");
+            }
+            
         }
     }
     LastTransferTime = ES_Timer_GetTime();

@@ -228,6 +228,9 @@ void __ISR(_SPI_2_VECTOR, IPL6SOFT) SPIFollowerISR(void) {
         // new added code for debugging
         GameLogicState_t currentState = QueryGameLogicFSM();
         switch (currentState) {
+                case Setup_Game_s:
+                CurrentNavStatus = PIC1_UNLOADING_CRATE;
+                break;
             case UnloadingCrate_Game_s:
                 CurrentNavStatus = PIC1_UNLOADING_CRATE;
                 break;

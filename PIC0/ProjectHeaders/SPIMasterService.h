@@ -48,6 +48,10 @@
 #define NAV_STATUS_INIT 0x5D
 #define NAV_STATUS_TAPE_ALIGNED 0x5E
 
+//defined by Cyrus:
+#define PIC1_UNLOADING_CRATE 0x5F
+#define PIC1_PICKING_UP_CRATE 0x60
+
 bool InitSPIMasterService(uint8_t Priority);
 bool PostSPIMasterService(ES_Event_t ThisEvent);
 ES_Event_t RunSPIMasterService(ES_Event_t ThisEvent);

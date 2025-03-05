@@ -51,6 +51,7 @@ static void enter_UnloadingCrate(void);
 static GameLogicState_t CurrentState;
 static uint8_t TimeExpireCounter = 0;
 // with the introduction of Gen2, we need a module level Priority var as well
+static bool RotateDir = 0; //0 means CCW and 1 means CW
 static uint8_t MyPriority;
 
 /*------------------------------ Module Code ------------------------------*/
@@ -181,7 +182,7 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
           PostServoService(ThisEvent);
           DB_printf("GameFSM posted side indication request to servo side indicator service \n");
           //disable the beacon detection interrupt to save CPU resources
-          //IC1CONbits.ON = 0;
+          IC1CONbits.ON = 0;
           ES_Event_t Event2Post = {ES_BEACON_FOUND, STATE_BEACON_FOUND};
           PostSPIMasterService(Event2Post); // tell PIC1 beacon has been detected
         }

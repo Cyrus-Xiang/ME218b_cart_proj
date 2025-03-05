@@ -21,16 +21,10 @@ volatile static uint16_t NumRollover;
 #define HALF_SEC (ONE_SEC / 2)
 #define QUATER_SEC (HALF_SEC / 2)
 
-//#define GAME_TIME 60 * ONE_SEC
-
-//#define PWM_OUTPUT LATBbits.LATB9
-
 
 static uint16_t maxPulseTicks = 6250; // +90
 static uint16_t minPulseTicks = 1250; // -90
-//uint16_t currnetPulseTicks = 6250;
-//uint8_t currentStep = 0;
-//uint8_t lastPostLiveStep = 0;
+
 static uint8_t maxStep = 60*1000 / QUATER_SEC ;
 
 //static Beacon_t DetectedBeacon;
@@ -44,20 +38,6 @@ static uint8_t DutyCycle;
 #define PWM_90_DEG 3.2
 #define JOINT1_TIME_STEP 50
 
-////
-//void ConfigTimer3() {
-//    T3CONbits.ON = 0;
-//    T3CONbits.TCS = 0;
-//    T3CONbits.TCKPS = 0b10;
-//    TMR3 = 0;
-//    PR3 = PIC_FREQ*50 / (CHANNEL4_PWM_FREQUENCY * TIMER3_PRESCALE) - 1;
-//    //PR3 = 399;
-//
-//    IFS0CLR = _IFS0_T3IF_MASK;
-//    IPC3bits.T3IP = 6;
-//    IEC0SET = _IEC0_T3IE_MASK;
-//    T3CONbits.ON = 1;
-//}
 
 static void ConfigPWM_OC1() {
 
@@ -136,9 +116,6 @@ ES_Event_t RunJoint1ServoService(ES_Event_t ThisEvent)
         // Start at PWM_0_DEG
         currentPWM = PWM_0_DEG;
         decreasing = false;
-//        OC1RS = (float)(PR3 + 1) * currentPWM / 100;
-//        DB_printf("Starting PWM at %f\n", currentPWM);
-        // Post a timeout event to start advancing
         ES_Timer_InitTimer(JOINT1_SERVO_TIMER, JOINT1_TIME_STEP);
         break;
     

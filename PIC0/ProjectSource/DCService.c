@@ -2,8 +2,7 @@
 #include "ES_Framework.h"
 #include "DCService.h"
 #include <xc.h>
-//#include "PWM_PIC32.h"
-//#include "PWMSetup.h"
+
 
 /*----------------------------- Module Defines ----------------------------*/
 #define ONE_SEC 1000 // 1000 ms
@@ -93,18 +92,14 @@ bool InitDCMotorService(uint8_t Priority)
     ES_Event_t ThisEvent;
     ThisEvent.EventType = ES_INIT;
     
-    //ConfigTimer2();
+   
     ConfigPWM_OC2();
-    //OC2RS = (PR2 + 1) * 90 / 100;
-    //OC2RS = PR2/2;
-//    DB_printf("curent PR2 %d\n", PR2);
-    //SetPWMDutyCycle(80); // Set to 50% duty cycle
+ 
+
     Direction = (DIR_VAL == 1) ? CW : CCW;
-//    OC2RS = (PR2 + 1) * DUTY_CYCLE / 100;
-//    LATAbits.LATA0 = 0;
-//    
+
     if (DIR_VAL == 1){
-//      OC1RS = 0;
+
       OC2RS = (PR2 + 1) * DUTY_CYCLE / 100;
       LATAbits.LATA0 = 0;
       
@@ -155,23 +150,6 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
         
         break;
 
-    // case ES_TIMEOUT:
-    //     // Print the current OC1RS value for debugging
-    //     //DB_printf("Current OC1RS: %d\n", OC1RS);
-    //     // Restart the timer to keep checking periodically
-    //     //DB_printf("curent OC1RS %d\n", OC1RS);
-    //     if (Direction == CW && DIR_VAL == 0) {
-    //         DC_1 = 0;
-    //         DC_2 = 1;
-    //         Direction = CCW;
-    //     } else if (Direction == CCW && DIR_VAL == 1) {
-    //         DC_1 = 1;
-    //         DC_2 = 0;
-    //         Direction = CW;
-    //     }
-
-    //     ES_Timer_InitTimer(DC_MOTOR_TIMER, interval);
-    //     break;
     
     case ES_NEW_KEY:
         DB_printf('direction reversed!!!');
@@ -182,22 +160,7 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
         }
     break;
 
-//    case ES_ADC_UPDATE:
-//        // Update motor speed based on event parameter (0-100%)
-//        currentADC = ThisEvent.EventParam;
-//        currentDutyCycle = currentADC*100/1024;
-//        SetPWMDutyCycle(currentDutyCycle);
-//        DB_printf("Current DutyCycle: %d\n", currentDutyCycle);
-//        DB_printf("curent OC1RS %d\n", OC1RS);
-//        
-//        break;
-//
-//    case ES_CHANGE_DIRECTION:
-//        // Change motor direction
-//        forward = !forward;
-//        SetMotorDirection(forward);
-//        break;
-//
+
     default:
         break;
     }

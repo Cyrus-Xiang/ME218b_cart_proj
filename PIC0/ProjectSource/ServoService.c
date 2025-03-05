@@ -99,7 +99,7 @@ ES_Event_t RunServoService(ES_Event_t ThisEvent)
 
 static void ConfigPWM_OC4() {
 
-//     map OC2 to RB13
+//     map OC4 to RB13
     RPB13R = 0b0101;
     //Clear OC2CON register: 
     OC4CON = 0;

@@ -25,12 +25,18 @@ static uint8_t DutyCycle;
 // 50 , 1
 
 #define PIC_FREQ 20000000 // PIC 20MHz
-#define PWM_0_DEG 7
-#define PWM_90_DEG 3.2
+#define PWM_0_DEG 50
+#define PWM_90_DEG 10
 #define JOINT1_TIME_STEP 50
+//for configuring timer 2
+#define PWM_freq 400 // wheel motor PWM frquency in Hz
+#define PIC_freq 20000000
+#define PIC_freq_kHz 20000
+#define ns_per_tick 50 // nano-sec per tick for the PBC = 1/PIC_freq
+#define prescalar_T2 8  // for PWM for the 2 motors
 
 static void ConfigPWM_OC1() ;
-
+static void ConfigTimer2();
 
 
 
@@ -43,10 +49,10 @@ bool InitJoint1ServoService(uint8_t Priority)
     // When doing testing, it is useful to announce just which program
     // is running.
     puts("\rStarting ServoService\r");
-
+    ConfigTimer2();
     TRISBbits.TRISB15 = 0; // set RB15 as PMW output pin
-    ConfigPWM_OC1();  // !!!!!!!!!!!!
-    //PR3 = 399999;
+    ConfigPWM_OC1();  
+ 
     DutyCycle = PWM_0_DEG;
 
     // post the initial transition event
@@ -80,7 +86,7 @@ ES_Event_t RunJoint1ServoService(ES_Event_t ThisEvent)
     case ES_INIT:
 //        // Start at PWM_0_DEG
         currentPWM = PWM_0_DEG;
-        OC1RS = (float)(PR3 + 1) * currentPWM / 100;
+        OC1RS = (float)(PR2) * currentPWM / 100;
         DB_printf("Starting PWM at %f\n", currentPWM);
 //        // Post a timeout event to start advancing
 //        ES_Timer_InitTimer(JOINT1_SERVO_TIMER, JOINT1_TIME_STEP);
@@ -136,12 +142,34 @@ static void ConfigPWM_OC1() {
     // Configure the Output Compare module for one of two PWM operation modes
     OC1CONbits.ON = 0;         // Turn off Output Compare module
     OC1CONbits.OCM = 0b110;    // PWM mode without fault pin
-    OC1CONbits.OCTSEL = 1;     // Use Timer3 as the time base
+    OC1CONbits.OCTSEL = 0;     // Use Timer2 as the time base
 
     // Set the PWM duty cycle by writing to the OCxRS register
-    OC1RS = PR3 * 0;       // Secondary Compare Register (for duty cycle)
-    OC1R = PR3 * 0;        // Primary Compare Register (initial value)
+    OC1RS = PR2 * 0;       // Secondary Compare Register (for duty cycle)
+    OC1R = PR2 * 0;        // Primary Compare Register (initial value)
     OC1CONbits.ON = 1;         // Enable Output Compare module
     
     return;
+}
+static void ConfigTimer2()
+{
+  // Clear the ON control bit to disable the timer.
+  T2CONbits.ON = 0;
+  // Clear the TCS control bit to select the internal PBCLK source.
+  T2CONbits.TCS = 0;
+  // Set input clock prescale to be 8:1
+  T2CONbits.TCKPS = 0b011;
+  // Clear the timer register TMR2
+  TMR2 = 0;
+  // Load PR2 with desired 16-bit match value
+  PR2 = PIC_freq / (PWM_freq * prescalar_T2) - 1;
+  DB_printf("PR2 is set to %d \n", PR2);
+
+  // Clear the T2IF interrupt flag bit in the IFS2 register
+  IFS0CLR = _IFS0_T2IF_MASK;
+  // Disable interrupts on Timer 2
+  IEC0CLR = _IEC0_T2IE_MASK;
+  //turn on the timer again
+  T2CONbits.ON = 1;
+  return;
 }

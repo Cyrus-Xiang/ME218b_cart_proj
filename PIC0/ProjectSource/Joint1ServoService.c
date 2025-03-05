@@ -78,88 +78,6 @@ static void ConfigPWM_OC1() {
     return;
 }
 
-//bool InitJoint1ServoService(uint8_t Priority)
-//{
-//    ES_Event_t ThisEvent;
-//
-//    MyPriority = Priority;
-//
-//    // When doing testing, it is useful to announce just which program
-//    // is running.
-//    puts("\rStarting ServoService\r");
-//
-//    TRISBbits.TRISB15 = 0; // set RB15 as PMW output pin
-//    ConfigPWM_OC1();  // !!!!!!!!!!!!
-//    //PR3 = 399999;
-//    DutyCycle = PWM_0_DEG;
-//
-//    // post the initial transition event
-//    ThisEvent.EventType = ES_INIT;
-//    if (ES_PostToService(MyPriority, ThisEvent) == true)
-//    {
-//        return true;
-//    }
-//    else
-//    {
-//        return false;
-//    }
-//}
-//
-//bool PostJoint1ServoService(ES_Event_t ThisEvent)
-//{
-//    return ES_PostToService(MyPriority, ThisEvent);
-//}
-//
-//
-//ES_Event_t RunJoint1ServoService(ES_Event_t ThisEvent)
-//{
-//    ES_Event_t ReturnEvent;
-//    ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
-//    static float currentPWM = PWM_0_DEG; // Start from PWM_0_DEG
-//    const float PWM_STEP = 0.2;
-//    
-//    switch (ThisEvent.EventType)
-//    {
-//    case ES_INIT:
-//        // Start at PWM_0_DEG
-//        currentPWM = PWM_0_DEG;
-//        OC1RS = (float)(PR3 + 1) * currentPWM / 100;
-//        DB_printf("Starting PWM at %f\n", currentPWM);
-//        // Post a timeout event to start advancing
-//        ES_Timer_InitTimer(JOINT1_SERVO_TIMER, JOINT1_TIME_STEP);
-//        break;
-//    
-//    case ES_TIMEOUT:
-//        if (currentPWM > PWM_90_DEG) {
-//            currentPWM -= PWM_STEP;
-//            if (currentPWM < PWM_90_DEG) {
-//                currentPWM = PWM_90_DEG; // Ensure it does not exceed limit
-//            }
-//            OC1RS = (float)(PR3 + 1) * currentPWM / 100;
-//            DB_printf("Current PWM: %f\n", currentPWM);
-//            // Restart timer for next step
-//            ES_Timer_InitTimer(JOINT1_SERVO_TIMER, JOINT1_TIME_STEP);
-//        }
-//        break;
-//       
-//    
-//    
-//    default:
-//        break;
-//    }
-//    return ReturnEvent;
-//}
-//
-//
-////
-////void __ISR(_TIMER_3_VECTOR, IPL6SOFT) Timer3_ISR(void) {
-////    __builtin_disable_interrupts();
-////    if (IFS0bits.T3IF) {
-////        NumRollover++;
-////        IFS0CLR = _IFS0_T3IF_MASK;
-////    }
-////    __builtin_enable_interrupts();
-////}
 
 
 bool InitJoint1ServoService(uint8_t Priority)
@@ -178,7 +96,7 @@ bool InitJoint1ServoService(uint8_t Priority)
     DutyCycle = PWM_0_DEG;
 
     // post the initial transition event
-    ThisEvent.EventType = ES_ROTATE_90;
+    ThisEvent.EventType = ES_INIT;
     if (ES_PostToService(MyPriority, ThisEvent) == true)
     {
         return true;

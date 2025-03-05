@@ -263,7 +263,7 @@ ES_Event_t RunJoint2ServoService(ES_Event_t ThisEvent)
     switch (ThisEvent.EventType)
     {
     case ES_INIT:
-        currentPWM = PWM_180_DEG;
+        currentPWM = PWM_0_DEG;
         increasing = true;
         OC3RS = (float)(PR3 + 1) * currentPWM / 100;
         DB_printf("[INIT] Servo at 180 degrees (PWM: %d)\n", (int)(currentPWM * 100));

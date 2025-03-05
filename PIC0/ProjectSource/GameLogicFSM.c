@@ -46,10 +46,10 @@ static void enter_UnloadingCrate(void);
 #define ActionTimeAllowed 2000
 #define IdleTimeAtSetup 1000
 #define InGameLED_LAT LATBbits.LATB3
-#define GameTotalAllowedTime 218000
+#define GameTotalAllowedTime 46000
 #define LinearStageSteps_unload 300 //we assume that it takes 300 steps to unload a crate
 static GameLogicState_t CurrentState;
-
+static uint8_t TimeExpireCounter = 0;
 // with the introduction of Gen2, we need a module level Priority var as well
 static uint8_t MyPriority;
 
@@ -147,7 +147,13 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
   //the following runs no matter what state the game is in
   if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == GameTotalTime_TIMER)
   {
-    exitGame();
+    ES_Timer_InitTimer(GameTotalTime_TIMER,GameTotalAllowedTime);
+    TimeExpireCounter++;
+    if (TimeExpireCounter == 3)
+    {
+      exitGame();
+    }
+
   }
   
   switch (CurrentState)

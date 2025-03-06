@@ -230,10 +230,10 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
       else if (ThisEvent.EventType == ES_STEPPER_COMPLETE)
       {
         CurrentState = Wait4PIC1Stage2_Game_s;
-        DB_printf("stepper complete\n");
-        DB_printf("transition from UnloadingCrate_Game_s to Wait4PIC1_Game_s\n");
-        ES_Event_t Event2Post = {ES_BEACON_FOUND, 0};
-        PostSPIMasterService(Event2Post); 
+        DB_printf("stepper complete received in Gamelogic\n");
+        DB_printf("transition from UnloadingCrate_Game_s to Wait4PIC1Stage2_Game_s\n");
+          ES_Event_t Event2Post = {ES_BEACON_FOUND, STATE_BEACON_FOUND};
+          PostSPIMasterService(Event2Post); // tell PIC1 beacon has been detected
         
       } 
     }

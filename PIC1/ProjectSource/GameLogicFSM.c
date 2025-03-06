@@ -337,6 +337,7 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
       }  
       
     }
+    break;
     case B2CMidRotate_Game_s:{
       if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == ActionAllowedTime_TIMER)
       {
@@ -363,7 +364,7 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
       
 
     }
-    break;
+    
     break;
     default:
     break;

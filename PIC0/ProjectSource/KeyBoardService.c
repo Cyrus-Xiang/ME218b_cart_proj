@@ -272,9 +272,10 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
         DB_printf("keyboard posted side indication request to servo side indicator service \n");
         break;
     case 'C':
-        // Event2Post.EventType = ES_SERVO_IND_RESET;
-        // PostGameLogicFSM(Event2Post);
-        // DB_printf("keyboard posted side indication reset request to servo side indicator service \n");
+         Event2Post.EventType = ES_BEACON_FOUND;
+        Event2Post.EventParam = STATE_BEACON_FOUND;
+        PostSPIMasterService(Event2Post); // tell PIC1 beacon has been detected
+        DB_printf("keyboard posted beacon found to SPIMasterService \n");
         break;
     case 'D':
 

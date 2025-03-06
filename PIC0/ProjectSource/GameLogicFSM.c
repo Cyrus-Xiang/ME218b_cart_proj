@@ -47,7 +47,7 @@ static void enter_UnloadingCrate(void);
 #define IdleTimeAtSetup 1000
 #define InGameLED_LAT LATBbits.LATB3
 #define GameTotalAllowedTime 46000
-#define LinearStageStepsBtw2Stages 6000 //the steps between the two stack levels
+#define LinearStageStepsBtw2Stages 1000//6000 //the steps between the two stack levels
 #define LinearAcutator_TIME 1000
 static GameLogicState_t CurrentState;
 static uint8_t TimeExpireCounter = 0;
@@ -232,8 +232,8 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
         CurrentState = Wait4PIC1Stage2_Game_s;
         DB_printf("stepper complete received in Gamelogic\n");
         DB_printf("transition from UnloadingCrate_Game_s to Wait4PIC1Stage2_Game_s\n");
-          ES_Event_t Event2Post = {ES_BEACON_FOUND, STATE_BEACON_FOUND};
-          PostSPIMasterService(Event2Post); // tell PIC1 beacon has been detected
+        ES_Event_t Event2Post = {ES_BEACON_FOUND, STATE_BEACON_FOUND};
+        PostSPIMasterService(Event2Post); // tell PIC1 beacon has been detected
         
       } 
     }

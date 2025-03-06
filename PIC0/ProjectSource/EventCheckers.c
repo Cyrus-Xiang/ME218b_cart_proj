@@ -119,16 +119,36 @@ bool Check4Keystroke(void)
   return false;
 }
 
-bool Check4GameStartButton(void){
-  if (PORTBbits.RB2 == 1)
-  {
-    ES_Event_t ThisEvent;
-    ThisEvent.EventType = ES_GAME_START_BUTTON_PRESSED;
-    PostGameLogicFSM(ThisEvent);
-    DB_printf("event checker: game start button pressed \n");
-    return true;
-  }
-  return false;
+// bool Check4GameStartButton(void){
+//   if (PORTBbits.RB2 == 1)
+//   {
+//     ES_Event_t ThisEvent;
+//     ThisEvent.EventType = ES_GAME_START_BUTTON_PRESSED;
+//     PostGameLogicFSM(ThisEvent);
+//     DB_printf("event checker: game start button pressed \n");
+//     return true;
+//   }
+//   return false;
   
+// }
+bool Check4GameStartButton(void) {
+    static bool lastButtonState = false;  // Store previous button state
+    bool currentButtonState = PORTBbits.RB2;  // Read the current button state
+    bool ReturnVal = false;
+    
+    // Debounce: Only trigger event if state changes
+    if (currentButtonState != lastButtonState) {
+        if (currentButtonState) {  // Button pressed
+            ES_Event_t ThisEvent;
+            ThisEvent.EventType = ES_GAME_START_BUTTON_PRESSED;
+            PostGameLogicFSM(ThisEvent);
+            DB_printf("event checker: game start button pressed \n");
+            ReturnVal = true;
+        }
+    }
+    
+    lastButtonState = currentButtonState;  // Update last state
+    return ReturnVal;
 }
+
 

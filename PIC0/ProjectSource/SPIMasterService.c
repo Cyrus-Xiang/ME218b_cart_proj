@@ -139,7 +139,7 @@ ES_Event_t RunSPIMasterService(ES_Event_t ThisEvent)
     {
         // Query the slave for its status
         SendSPICommand(NAV_CMD_QUERY_STATUS);
-        DB_printf("We are Sending SPI Query command ...\r\n");
+        //DB_printf("We are Sending SPI Query command ...\r\n");
         
     } else {
         if (ThisEvent.EventType == ES_NEW_NAV_CMD && ThisEvent.EventParam != 0) {
@@ -233,13 +233,13 @@ void __ISR(_SPI_1_VECTOR, IPL6SOFT) SPIMasterISR(void) {
         ES_Event_t CmdEvent;
         if (ReceivedStatus == NAV_STATUS_OK || ReceivedStatus == NAV_STATUS_ERROR || ReceivedStatus == NAV_STATUS_IDLE) {
             // Received status
-            DB_printf("[SPI] Received status: %s\r\n", TranslateNavStatusToStr(ReceivedStatus));
+            //DB_printf("[SPI] Received status: %s\r\n", TranslateNavStatusToStr(ReceivedStatus));
             CmdEvent.EventType = ES_NAVIGATOR_HEALTH_CHECK;
             CmdEvent.EventParam = ReceivedStatus;
             PostSimpleHSM(CmdEvent);
         } else if (PrevNavigatorStatus != ReceivedStatus) {
-            DB_printf("[SPI] Previous status!!!: %s\r\n", TranslateNavStatusToStr(PrevNavigatorStatus));
-            DB_printf("[SPI] Received status!!!: %s\r\n", TranslateNavStatusToStr(ReceivedStatus));
+            //DB_printf("[SPI] Previous status!!!: %s\r\n", TranslateNavStatusToStr(PrevNavigatorStatus));
+            //DB_printf("[SPI] Received status!!!: %s\r\n", TranslateNavStatusToStr(ReceivedStatus));
             CmdEvent.EventType = ES_NAVIGATOR_STATUS_CHANGE;
             CmdEvent.EventParam = ReceivedStatus;
             if (ReceivedStatus == PIC1_UNLOADING_CRATE){

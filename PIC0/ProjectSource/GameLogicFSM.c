@@ -47,7 +47,7 @@ static void enter_UnloadingCrate(void);
 #define IdleTimeAtSetup 1000
 #define InGameLED_LAT LATBbits.LATB3
 #define GameTotalAllowedTime 46000
-#define LinearStageSteps_unload 6000 //we assume that it takes 300 steps to unload a crate
+#define LinearStageStepsBtw2Stages 6000 //the steps between the two stack levels
 #define LinearAcutator_TIME 1000
 static GameLogicState_t CurrentState;
 static uint8_t TimeExpireCounter = 0;
@@ -179,9 +179,9 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
         PostDCMotorService(Event2Post);
         DB_printf("commanding linear actuator \n");
         ES_Timer_InitTimer(LINEAR_ACT_TIMER,LinearAcutator_TIME);
-        Event2Post.EventType == ES_STEPPER_FWD;
-        Event2Post.EventParam = 1000;
-        PostStepperService(Event2Post);
+        ES_Event_t Event2Post2 ={ES_STEPPER_FWD,1000};
+        PostStepperService(Event2Post2);
+        DB_printf("commanding stepper to get to initial pos \n");
       }
       
     }
@@ -200,10 +200,12 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
         }
         break;
         case ES_SPI_PIC1_UNLOADING_CUBE_S:
+          ES_Timer_InitTimer(LINEAR_ACT_TIMER,LinearAcutator_TIME + 600);
+          ES_Event_t Event2Post = {ES_LINEAR_ACTUATOR_BWD, 0};
+          PostDCMotorService(Event2Post);
           CurrentState = UnloadingCrate_Game_s;
           DB_printf("transition from Wait4PIC1_Game_s to UnloadingCrate_Game_s\n");
-          ES_Event_t Event2Post = {ES_SELF_TRANSITION, 0};
-          PostGameLogicFSM(Event2Post);
+          DB_printf("commanding linear actuator to retract\n");
         break;
         default:
         break;
@@ -215,13 +217,29 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
       if (ThisEvent.EventType == ES_SELF_TRANSITION)
       {
         enter_UnloadingCrate();
-      }else if (ThisEvent.EventType == ES_STEPPER_COMPLETE)
+      }
+      else if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == LINEAR_ACT_TIMER)
       {
-        CurrentState = Wait4PIC1_Game_s;
+        ES_Event_t Event2Post = {ES_LINEAR_ACTUATOR_STOP, 0};
+        PostDCMotorService(Event2Post);
+        ES_Event_t Event2Post2 = {ES_STEPPER_FWD, LinearStageStepsBtw2Stages};
+        PostStepperService(Event2Post2);
+        DB_printf("commanding linear actuator to stop\n");
+        DB_printf("commanding stepper to unload crate\n");
+      }
+      else if (ThisEvent.EventType == ES_STEPPER_COMPLETE)
+      {
+        CurrentState = Wait4PIC1Stage2_Game_s;
         DB_printf("stepper complete\n");
         DB_printf("transition from UnloadingCrate_Game_s to Wait4PIC1_Game_s\n");
+        ES_Event_t Event2Post = {ES_BEACON_FOUND, 0};
+        PostSPIMasterService(Event2Post); 
         
       } 
+    }
+    break;
+    case Wait4PIC1Stage2_Game_s:{
+
     }
     break;
     default:
@@ -264,9 +282,7 @@ static void exitGame(void){
 }
 
 static void enter_UnloadingCrate(void){
-  ES_Event_t Event2Post = {ES_STEPPER_FWD, LinearStageSteps_unload};
+  ES_Event_t Event2Post = {ES_STEPPER_FWD, LinearStageStepsBtw2Stages};
   PostStepperService(Event2Post);
-  Event2Post.EventType = ES_BEACON_FOUND;
-  PostSPIMasterService(Event2Post); // tell PIC1 beacon has been detected
   return;
 }

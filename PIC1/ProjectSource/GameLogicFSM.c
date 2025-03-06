@@ -308,7 +308,8 @@ ES_Event_t RunGameLogicFSM(ES_Event_t ThisEvent)
             ES_Event_t Event2Post;
             Event2Post.EventType = ES_MOTOR_FWD;
             Event2Post.EventParam = 65;
-            CurrentState = PickingUpCrate_Game_s;
+            PostMotorService(Event2Post);
+            CurrentState = BackingToInterB_Game_s;
         }
     }
     break;

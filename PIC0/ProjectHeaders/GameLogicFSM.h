@@ -16,7 +16,7 @@
 // State definitions for use with the query function
 typedef enum
 {
-  P_Init_Game_s,Wait4PIC1_Game_s, UnloadingCrate_Game_s
+  P_Init_Game_s,Wait4PIC1_Game_s, UnloadingCrate_Game_s, Wait4PIC1Stage2_Game_s
 }GameLogicState_t;
 
 // Public Function Prototypes

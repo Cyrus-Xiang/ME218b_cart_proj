@@ -172,18 +172,6 @@
 #define SERV_9_QUEUE_SIZE 3
 #endif
 
-/****************************************************************************/
-// These are the definitions for Service 10
-//#if NUM_SERVICES > 10
-//// the header file with the public function prototypes
-//#define SERV_10_HEADER "SimpleHSM.h"
-//// the name of the Init function
-//#define SERV_10_INIT InitSimpleHSM
-//// the name of the run function
-//#define SERV_10_RUN RunSimpleHSM
-//// How big should this services Queue be?
-//#define SERV_10_QUEUE_SIZE 3
-//#endif
 
 
 #if NUM_SERVICES > 10
